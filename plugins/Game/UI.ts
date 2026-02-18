@@ -90,6 +90,7 @@ export class UI {
 
             case WidgetRoot.CENTER:
             default:
+                posFactor = { x: 0.5, y: 0.5 };
                 break;
         }
 

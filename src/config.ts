@@ -1,8 +1,8 @@
 import {GameConfig} from "../plugins/Game/GameConfig.ts";
 
-export const GAME_CONFIG: GameConfig = {
+export const APP_CONFIG: GameConfig = {
     designSize: {x: 720, y: 1280},
-    background: "#000",
+    background: "#706a69",
     REM: 32,
     padding: {x: 32, y: 32},
     fontFamily: "DynaPuff, Arial, sans-serif",

@@ -30,15 +30,15 @@ export function StyleText<T extends Text>(ins: T): T {
 
 // =====================================================================================
 
-export async function AddBackground(backgroundKey: string) {
+export async function AddBackground(backgroundKey: string, pos: WidgetRoot = WidgetRoot.CENTER) {
     await AssetsBase64.load(backgroundKey, "texture");
 
-    Game.I.ui.add(
+    return Game.I.ui.add(
         new Sprite({
             texture: Assets.get(backgroundKey),
             anchor: .5
         }),
-        WidgetRoot.CENTER,
+        pos,
         { x: 0, y: 0 },
         (ins, w, h) => {
             ins.scale.set(
@@ -54,11 +54,11 @@ export async function AddBackground(backgroundKey: string) {
 // =====================================================================================
 
 export function AddCover(alpha: number = .5, animDuration: number = .5) {
-    Game.I.ui.container.addChild(new Cover(
+    return Game.I.ui.add(new Cover(
         Game.I.resizer,
         alpha,
         animDuration
-    ));
+    ), WidgetRoot.CENTER);
 }
 
 // =====================================================================================

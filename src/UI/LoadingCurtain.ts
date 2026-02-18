@@ -1,0 +1,111 @@
+import * as PIXI from "pixi.js";
+import {Assets, Container, Graphics, Sprite} from "pixi.js";
+
+import {gsap} from "gsap";
+import {PixiPlugin} from "gsap/PixiPlugin";
+import {AssetsBase64} from "../../plugins/Assets/AssetsBase64.ts";
+import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB";
+import {Game} from "../../plugins/Game/Game.ts";
+import {WidgetRoot} from "../../plugins/Game/UI.ts";
+import {AddBackground, AddCover} from "../../plugins/Game/GameUIUtils.ts";
+
+PixiPlugin.registerPIXI(PIXI);
+gsap.registerPlugin(PixiPlugin);
+
+
+export type Curtain = {
+    view: Container,
+    fill: Graphics
+    other: Container[],
+};
+
+export default class LoadingCurtain {
+    private static _curtain: Curtain;
+
+
+    public static async Show(game: Game, duration: number = 2): Promise<void> {
+        this._curtain ??= await this.Construct(game);
+
+        const initWidth = this._curtain.fill.width;
+
+        const timeline = gsap.timeline();
+        timeline.set(this._curtain.fill, { width: 0 })
+            .to(this._curtain.fill, {
+                duration: .35 * duration,
+                width: initWidth * 0.5,
+            })
+            .to(this._curtain.fill, {
+                duration: .5 * duration,
+                width: initWidth * 0.75,
+            })
+            .to(this._curtain.fill, {
+                duration: .15 * duration,
+                width: initWidth,
+            })
+            .call((() => {
+                game.ui.remove(this._curtain.view);
+                this._curtain.other.forEach(other => game.ui.remove(other));
+
+                this._curtain.view.destroy();
+                this._curtain.other.forEach(other => other.destroy());
+            }));
+
+        await timeline.play();
+    }
+
+
+    private static async Construct(game: Game): Promise<Curtain> {
+        if (this._curtain)
+            return this._curtain;
+
+        const background = await AddBackground(AssetsDB.texture.loading_background);
+        const cover = AddCover(.5, Number.EPSILON);
+        cover.show();
+
+        game.resize();
+
+        await Promise.all([
+            AssetsBase64.load(AssetsDB.texture.loading_logo, "texture"),
+            AssetsBase64.load(AssetsDB.texture.loading_border, "texture"),
+        ]);
+
+        const view = game.ui.add(new Container(), WidgetRoot.CENTER);
+
+        view.addChild(new Sprite({
+            texture: Assets.get(AssetsDB.texture.loading_logo),
+            anchor: .5,
+            position: { x: 0, y: -300 }
+        }));
+
+        const border = view.addChild(new Sprite({
+            texture: Assets.get(AssetsDB.texture.loading_border),
+            anchor: .5,
+            position: { x: 0, y: 300 }
+        }));
+        const borderPadding = 17;
+        const innerWidth = border.width - borderPadding * 2;
+        const innerHeight = border.height - borderPadding * 2;
+
+        const mask = view.addChild(new Graphics()
+            .roundRect(-innerWidth / 2, -innerHeight / 2, innerWidth, innerHeight, innerHeight / 2)
+            .fill("#fff")
+        );
+        mask.position.set(border.x, border.y);
+
+        const fill = view.addChild(new Graphics()
+            .rect(0, 0, innerWidth, innerHeight)
+            .fill('#ffbc00')
+        );
+        fill.position.set(
+            border.x - innerWidth / 2,
+            border.y - innerHeight / 2
+        );
+        fill.mask = mask;
+
+        return this._curtain = {
+            view,
+            fill,
+            other: [ background, cover ]
+        };
+    }
+}

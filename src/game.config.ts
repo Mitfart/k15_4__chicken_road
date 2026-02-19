@@ -19,12 +19,12 @@ export const LEVEL_CONFIG: LevelConfig = {
         21000,
     ],
     values_view: [
-        "x2",
-        "x4",
-        "x11",
-        "x18",
-        "-",
-        "x31",
+        "x1.5",
+        "x3.5",
+        "x4.5",
+        "x5.5",
+        "x11.5",
+        "BONUS \n GAME",
     ],
 };
 

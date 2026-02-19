@@ -1,17 +1,32 @@
-import {AnimatedSprite, Assets, Container} from "pixi.js";
+import {AnimatedSprite, Assets, Container, Sprite} from "pixi.js";
 
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
+import {AnimatedText} from "../../../plugins/Utils/Components/AnimatedText.ts";
+import {APP_CONFIG} from "../../config.ts";
 
 gsap.registerPlugin(PixiPlugin);
 
 export class Chicken extends Container {
-    public idleView!: AnimatedSprite;
-    public jumpView!: AnimatedSprite;
+    private idleView!: AnimatedSprite;
+    private jumpView!: AnimatedSprite;
+
+    private _balanceTxt!: AnimatedText;
 
     private _jumpHeight: number;
     private _jumpDuration: number;
+
+    private _isJumping: boolean = false;
+
+    public get isJumping(): boolean {
+        return this._isJumping;
+    }
+
+    public get balanceTxt(): AnimatedText {
+        return this._balanceTxt;
+    }
+
 
     constructor(jumpHeight: number, jumpDuration: number) {
         super();
@@ -19,12 +34,6 @@ export class Chicken extends Container {
         this._jumpDuration = jumpDuration;
 
         this.createView();
-    }
-
-    private _isJumping: boolean = false;
-
-    public get isJumping(): boolean {
-        return this._isJumping;
     }
 
     public jumpTo(x: number, y: number, onComplete: () => void = () => {
@@ -86,5 +95,25 @@ export class Chicken extends Container {
         this.jumpView = this.addChild(AnimatedSprite.fromFrames(animations["jump"]));
         this.jumpView.anchor.set(origin.x, origin.y);
         this.jumpView.visible = false;
+
+        const balanceBlock = this.addChild(new Sprite({
+            texture: Assets.get(AssetsDB.texture.chicken_bage),
+            anchor: .5,
+            position: { x: -50, y: 100 }
+        }));
+
+        this._balanceTxt = balanceBlock.addChild(new AnimatedText({
+            style: {
+                fontSize: APP_CONFIG.REM,
+                fill: '#fff',
+                fontWeight: "bold",
+                stroke: {
+                    color: '#000',
+                    width: 2
+                }
+            },
+            anchor: .5,
+            y: 5
+        }, 0, .5, 'x', '', 2));
     }
 }

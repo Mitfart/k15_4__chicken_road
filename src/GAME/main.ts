@@ -1,13 +1,13 @@
 import {Game} from "../../plugins/Game/Game.ts";
 import {Level} from "./game/Level.ts";
 import {Chicken} from "./game/Chicken.ts";
-import {Container, Text, uid} from "pixi.js";
 import Bank from "../UI/Bank.ts";
 import Header, {HeaderScreen} from "../UI/Header.ts";
 import Contols, {ControlsScreen} from "../UI/Contols.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, Play} from "../../plugins/Utils/Animations.ts";
 import VFX from "../VFX/VFX.ts";
+import Packshot from "../UI/Packshot.ts";
 
 
 let _game!: Game;
@@ -61,12 +61,6 @@ export async function Main(game: Game) {
     level.nextSegment?.target();
     level.startRandomDriveThrow();
 
-    const coins = game.ui.add(VFX.coins());
-    coins.scale = 2;
-
-    const confetti = game.ui.add(VFX.confetti());
-    confetti.scale = 2;
-
     playFunction = play;
 
     // ===========================================================================================
@@ -78,8 +72,6 @@ export async function Main(game: Game) {
     OnClick(controls.playBtn, () => {
         if (blockInput) return;
         blockInput = true;
-
-        setScore(score + 100);
 
         playBtnAnim();
         playFunction();
@@ -100,7 +92,7 @@ async function play() {
 
     level.prevSegment?.complete();
 
-    chicken.jumpTo(level.currentPosition, level.position.y, () => {
+    chicken.jumpTo(level.currentPosition, level.position.y, async () => {
         level.currentSegment?.activate();
         level.nextSegment?.target();
 
@@ -108,11 +100,18 @@ async function play() {
         if (special) {
             special.func();
         } else {
-            // setScore(level.currentSegment?.value || 0);
+            setScore(level.currentSegment?.value || 0);
         }
 
         if (level.currentSegmentID >= level.length - 1) {
-            Bank.Show(_game, 2);
+            await Bank.Show(_game, 2);
+
+            await new Promise((resolve) => setTimeout(resolve, 500) );
+
+            const packshot = await Packshot.Construct(_game);
+            packshot.container.show();
+
+            await Bank.Hide();
         } else {
             blockInput = false;
         }
@@ -123,6 +122,7 @@ async function play() {
 async function setScore(value: number) {
     header.balanceTxt.setValue(score, value);
     controls.balanceTxt.setValue(score, value);
+    chicken.balanceTxt.setValue(score, value);
 
     score = value;
 }

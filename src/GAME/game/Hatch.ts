@@ -18,16 +18,24 @@ export class Hatch extends Sprite {
         super();
 
         this.anchor.set(.5);
+        this.activate();
 
         this._txt = this.addChild(new Text({
             text: txt,
             style: {
                 fontFamily: fontFamily,
-                fontSize: 50,
-                fill: "#fff"
+                fontSize: 40,
+                fontWeight: "bold",
+                align: 'center',
+                fill: "#fff",
+                stroke: {
+                    color: '#000',
+                    width: 2,
+                }
             },
-            anchor: { x: .5, y: .65 },
+            anchor: .5,
         }));
+        this._txt.scale.set((this.texture.width - 20) / this._txt.width);
 
         this.deactivate();
     }

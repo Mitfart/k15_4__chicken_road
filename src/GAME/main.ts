@@ -1,12 +1,13 @@
 import {Game} from "../../plugins/Game/Game.ts";
 import {Level} from "./game/Level.ts";
 import {Chicken} from "./game/Chicken.ts";
-import {Container, Text} from "pixi.js";
+import {Container, Text, uid} from "pixi.js";
 import Bank from "../UI/Bank.ts";
-import Header from "../UI/Header.ts";
-import Contols from "../UI/Contols.ts";
+import Header, {HeaderScreen} from "../UI/Header.ts";
+import Contols, {ControlsScreen} from "../UI/Contols.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, Play} from "../../plugins/Utils/Animations.ts";
+import VFX from "../VFX/VFX.ts";
 
 
 let _game!: Game;
@@ -25,9 +26,10 @@ const chickenJump = {
 let playFunction: () => void = () => { };
 let blockInput: boolean = false;
 
-let cashBlock!: { container: Container, view: Text };
-
 let score: number = 0;
+
+let header!: HeaderScreen;
+let controls!: ControlsScreen;
 
 
 export async function Main(game: Game) {
@@ -59,24 +61,31 @@ export async function Main(game: Game) {
     level.nextSegment?.target();
     level.startRandomDriveThrow();
 
+    const coins = game.ui.add(VFX.coins());
+    coins.scale = 2;
+
+    const confetti = game.ui.add(VFX.confetti());
+    confetti.scale = 2;
+
     playFunction = play;
 
     // ===========================================================================================
 
-    const header = await Header.Construct(game);
-    const controls = await Contols.Construct(game);
+    header = await Header.Construct(game);
+    controls = await Contols.Construct(game);
     const playBtnAnim = Play(AnimPulseIn(controls.playBtn, .25, .5));
 
     OnClick(controls.playBtn, () => {
         if (blockInput) return;
-
         blockInput = true;
+
+        setScore(score + 100);
+
         playBtnAnim();
         playFunction();
     });
 
     // ===========================================================================================
-
 }
 
 
@@ -108,4 +117,12 @@ async function play() {
             blockInput = false;
         }
     });
+}
+
+
+async function setScore(value: number) {
+    header.balanceTxt.setValue(score, value);
+    controls.balanceTxt.setValue(score, value);
+
+    score = value;
 }

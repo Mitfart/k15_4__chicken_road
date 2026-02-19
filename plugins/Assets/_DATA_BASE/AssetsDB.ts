@@ -1,4 +1,7 @@
 export const AssetsDB = {
+  "font": {
+    "Cera": "Cera"
+  },
   "audio": {
     "bank_reaction": "bank_reaction",
     "Car": "Car",
@@ -12,7 +15,8 @@ export const AssetsDB = {
   "data": {
     "cars": "cars",
     "chicken": "chicken",
-    "vfx_explosion": "vfx_explosion"
+    "vfx_coins": "vfx_coins",
+    "vfx_confetti": "vfx_confetti"
   },
   "texture": {
     "cars_tex": "cars_tex",
@@ -37,9 +41,41 @@ export const AssetsDB = {
     "loading_logo": "loading_logo",
     "logo": "logo",
     "packshot_logo": "packshot_logo",
-    "vfx_explosion": "vfx_explosion"
-  },
-  "font": {
-    "UNCAGE": "UNCAGE"
+    "vfx_coins_1": "vfx_coins_1",
+    "vfx_coins_10": "vfx_coins_10",
+    "vfx_coins_11": "vfx_coins_11",
+    "vfx_coins_12": "vfx_coins_12",
+    "vfx_coins_13": "vfx_coins_13",
+    "vfx_coins_14": "vfx_coins_14",
+    "vfx_coins_15": "vfx_coins_15",
+    "vfx_coins_16": "vfx_coins_16",
+    "vfx_coins_17": "vfx_coins_17",
+    "vfx_coins_2": "vfx_coins_2",
+    "vfx_coins_3": "vfx_coins_3",
+    "vfx_coins_4": "vfx_coins_4",
+    "vfx_coins_5": "vfx_coins_5",
+    "vfx_coins_6": "vfx_coins_6",
+    "vfx_coins_7": "vfx_coins_7",
+    "vfx_coins_8": "vfx_coins_8",
+    "vfx_coins_9": "vfx_coins_9",
+    "vfx_coins_tex": "vfx_coins_tex",
+    "vfx_confetti_1": "vfx_confetti_1",
+    "vfx_confetti_10": "vfx_confetti_10",
+    "vfx_confetti_11": "vfx_confetti_11",
+    "vfx_confetti_12": "vfx_confetti_12",
+    "vfx_confetti_13": "vfx_confetti_13",
+    "vfx_confetti_14": "vfx_confetti_14",
+    "vfx_confetti_15": "vfx_confetti_15",
+    "vfx_confetti_16": "vfx_confetti_16",
+    "vfx_confetti_17": "vfx_confetti_17",
+    "vfx_confetti_2": "vfx_confetti_2",
+    "vfx_confetti_3": "vfx_confetti_3",
+    "vfx_confetti_4": "vfx_confetti_4",
+    "vfx_confetti_5": "vfx_confetti_5",
+    "vfx_confetti_6": "vfx_confetti_6",
+    "vfx_confetti_7": "vfx_confetti_7",
+    "vfx_confetti_8": "vfx_confetti_8",
+    "vfx_confetti_9": "vfx_confetti_9",
+    "vfx_confetti_tex": "vfx_confetti_tex"
   }
 };

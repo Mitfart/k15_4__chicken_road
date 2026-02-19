@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import {Assets, Container, FillInput, Graphics, Sprite, TextStyleFontWeight} from "pixi.js";
+import {Assets, Container, Graphics, Sprite} from "pixi.js";
 
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
@@ -26,7 +26,10 @@ export default class Header {
         if (this._header)
             return this._header;
 
+        const width = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
         const height = 150;
+        const stroke = height / 4;
+
         const header = game.ui.add(new Container(), WidgetRoot.TOP);
 
         const background = header.addChild(new Graphics());
@@ -57,27 +60,26 @@ export default class Header {
             anchor: .5
         }, 0, .5, '', ' EUR', 1));
 
-        game.resizer.addResizeAction((w) => {
-            const stroke = height / 3;
 
+        logo.position.set(
+            -width / 2,
+            -stroke / 2
+        );
+
+        balanceBlock.position.set(
+            width / 2 - balanceBlock.width / 2,
+            -stroke / 2
+        );
+
+        game.resizer.addResizeAction((w) => {
             background
                 .clear()
                 .rect(-w / 2, -height / 2 - stroke, w, height)
                 .stroke({
-                    width:stroke,
+                    width: stroke,
                     color: '#333333',
                 })
                 .fill('#434343');
-
-            logo.position.set(
-                -w / 2 + 25,
-                -stroke / 2
-            );
-
-            balanceBlock.position.set(
-                w / 2 - balanceBlock.width / 2 - 25,
-                -stroke / 2
-            );
         });
 
         return this._header = {

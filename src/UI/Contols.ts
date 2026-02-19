@@ -48,11 +48,9 @@ export default class Contols {
         screen.addChild(topPanel);
 
 
-        const playBtn = screen.addChild(new Graphics({
-            position: { x: width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y },
-        })
+        const playBtn = screen.addChild(new Graphics({ position: { x: width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y } })
             .roundRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight)
-            .fill('green')
+            .fill('#3c8f57')
         );
         playBtn.addChild(new Text({
             text: "GO",
@@ -66,11 +64,9 @@ export default class Contols {
         }));
 
 
-        const cashBtn = screen.addChild(new Graphics({
-                position: { x: -width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y },
-            })
-                .roundRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight)
-                .fill('yellow')
+        const cashBtn = screen.addChild(new Graphics({ position: { x: -width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y }})
+            .roundRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight)
+            .fill('#ffc600')
         );
         const cashTextStyle: TextStyleOptions = {
             fontFamily: APP_CONFIG.fontFamily,

@@ -1,0 +1,151 @@
+{"frames": {
+
+"vfx_coins_1.png":
+{
+	"frame": {"x":0,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_2.png":
+{
+	"frame": {"x":320,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_3.png":
+{
+	"frame": {"x":640,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_4.png":
+{
+	"frame": {"x":960,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_5.png":
+{
+	"frame": {"x":1280,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_6.png":
+{
+	"frame": {"x":1600,"y":0,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_7.png":
+{
+	"frame": {"x":0,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_8.png":
+{
+	"frame": {"x":320,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_9.png":
+{
+	"frame": {"x":640,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_10.png":
+{
+	"frame": {"x":960,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_11.png":
+{
+	"frame": {"x":1280,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_12.png":
+{
+	"frame": {"x":1600,"y":321,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_13.png":
+{
+	"frame": {"x":0,"y":642,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_14.png":
+{
+	"frame": {"x":320,"y":642,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_15.png":
+{
+	"frame": {"x":640,"y":642,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_16.png":
+{
+	"frame": {"x":960,"y":642,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+},
+"vfx_coins_17.png":
+{
+	"frame": {"x":1280,"y":642,"w":320,"h":321},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":320,"h":321},
+	"sourceSize": {"w":320,"h":321}
+}},
+"animations": {
+	"vfx_coins": ["vfx_coins_1.png","vfx_coins_2.png","vfx_coins_3.png","vfx_coins_4.png","vfx_coins_5.png","vfx_coins_6.png","vfx_coins_7.png","vfx_coins_8.png","vfx_coins_9.png","vfx_coins_10.png","vfx_coins_11.png","vfx_coins_12.png","vfx_coins_13.png","vfx_coins_14.png","vfx_coins_15.png","vfx_coins_16.png","vfx_coins_17.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "vfx_coins_tex",
+	"format": "RGBA8888",
+	"size": {"w":1920,"h":963},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:5c115fdd8ca338a3166fbc80f174cdc9:8f2c48576607b45a3c7538055842f196:6f7ca93182e43245322f9bc656cf5296$"
+}
+}

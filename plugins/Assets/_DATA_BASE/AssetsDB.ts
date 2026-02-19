@@ -20,6 +20,7 @@ export const AssetsDB = {
   },
   "texture": {
     "cars_tex": "cars_tex",
+    "chicken_bage": "chicken_bage",
     "chicken_tex": "chicken_tex",
     "barrier": "barrier",
     "hatch_active": "hatch_active",

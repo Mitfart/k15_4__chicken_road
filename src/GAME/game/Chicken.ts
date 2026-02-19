@@ -72,9 +72,9 @@ export class Chicken extends Container {
 
 
     private createView() {
-        const origin = {x: .6, y: .75};
+        const origin = {x: .75, y: .75};
 
-        this.scale.set(.65);
+        this.scale.set(.5);
 
         const animations = Assets.get(AssetsDB.data.chicken).animations;
         this.idleView = this.addChild(AnimatedSprite.fromFrames(animations["idle"]));

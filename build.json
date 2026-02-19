@@ -1,5 +1,5 @@
 {
-  "app": "pixi_empty", // <-- YOUR NAME
+  "app": "pixi", // <-- YOUR NAME
   "network": "ironsource", // <-- TEST PLATFOMR / DEFAULT BUILD PLATFORM
   "language": "EN", // <-- TEST LANGUAGE / DEFAULT BUILD LANGUAGE
   "filename": "{app}_{network}_{language}", // <-- BUILD FILES NAME FORMAT
@@ -8,18 +8,18 @@
   "NETWORKS": [ // LEAVE EMPTY FOR BASIC BUILD
 //    "preview",
 //    "applovin",
-//    "unity",
+    "unity",
 //    "google",
 //    "ironsource",
 //    "facebook",
-//    "moloco",
+    "moloco",
 //    "bigo"
 //    "mintegral",
 //    "vungle",
 //    "adcolony",
 //    "tapjoy",
 //    "snapchat",
-//    "tiktok",
+    "tiktok"
 //    "appreciate",
 //    "chartboost",
 //    "pangle",

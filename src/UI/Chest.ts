@@ -12,7 +12,7 @@
  */
 
 import * as PIXI from "pixi.js";
-import {AnimatedSprite} from "pixi.js";
+import {AnimatedSprite, Assets} from "pixi.js";
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import {Game} from "../../plugins/Game/Game.ts";
@@ -21,6 +21,7 @@ import {LoadAssetsDB} from "../../plugins/Assets/LoadAssetsDB.ts";
 import {ScreenContainer} from "../../plugins/Utils/Components/ScreenContainer.ts";
 import {Cover} from "../../plugins/Utils/Components/Cover.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
+import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -45,9 +46,10 @@ export default class Chest {
 
         this._chest = await this.Construct(game, onComplete);
 
-        await this._chest.cover.show();
-
-        await this._chest.screen.show();
+        await Promise.all([
+            this._chest.cover.show(),
+            this._chest.screen.show()
+        ]);
 
         this.waitForOpenClick();
     }
@@ -72,59 +74,12 @@ export default class Chest {
         // Создаем затемнение фона (добавляем первым, чтобы был за сундуком)
         const cover = game.ui.add(new Cover(game.resizer, 0.6, 0.3), WidgetRoot.CENTER);
 
-        const screen = game.ui.add(new ScreenContainer(0.5, 1), WidgetRoot.CENTER);
-        let chestData: any;
-        try {
-            const assetsDB = await LoadAssetsDB();
-            
-            if (!assetsDB || !assetsDB.data || !assetsDB.data.chest) {
-                console.error("Chest: Asset 'chest' not found in assets database.");
-                throw new Error("Chest asset not found in database");
-            }
-            
-            chestData = assetsDB.data.chest;
-            
-            if (!chestData || typeof chestData !== 'object') {
-                console.error("Chest: Invalid chest data format.");
-                throw new Error("Chest data is not an object");
-            }
-            if ('isTexture' in chestData && chestData.isTexture) {
-                throw new Error("Chest data is a Texture");
-            }
-        } catch (error: any) {
-            throw new Error(`Failed to load chest asset: ${error.message}`);
-        }
-        
-        if (!chestData) {
-            throw new Error("Chest asset data is null");
-        }
+        const screen = game.ui.add(new ScreenContainer(0.5, 2.5), WidgetRoot.CENTER);
 
-        let animations = chestData.animations;
-        
-        if (!animations && chestData.frames && typeof chestData.frames === 'object') {
-            const frameKeys = Object.keys(chestData.frames);
-            
-            const closedFrames = frameKeys.slice(0, 10);
-            const openFrames = frameKeys.slice(10);
-            const openedFrames = frameKeys.slice(-1);
-            
-            animations = {
-                closed: closedFrames,
-                open: openFrames,
-                opened: openedFrames
-            };
-            
-        }
-        
-        if (!animations) {
-            throw new Error("Chest animations not found");
-        }
+        const chestData = Assets.get(AssetsDB.data.chest);
+        const animations = chestData.animations;
 
         const closedFrames = animations["closed"];
-        if (!closedFrames || !Array.isArray(closedFrames) || closedFrames.length === 0) {
-            throw new Error("Chest 'closed' animation not found");
-        }
-        
         const chestSprite = screen.addChild(AnimatedSprite.fromFrames(closedFrames));
         chestSprite.anchor.set(0.5);
         chestSprite.animationSpeed = 1 / closedFrames.length * 10; 
@@ -161,6 +116,9 @@ export default class Chest {
                 this.openChest();
             } else {
                 this.Hide();
+
+                if (this._chest.onComplete)
+                    this._chest.onComplete();
             }
         });
     }

@@ -5,6 +5,7 @@ import {PixiPlugin} from "gsap/PixiPlugin";
 import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import {AnimatedText} from "../../../plugins/Utils/Components/AnimatedText.ts";
 import {APP_CONFIG} from "../../config.ts";
+import {sound} from "@pixi/sound";
 
 gsap.registerPlugin(PixiPlugin);
 
@@ -51,11 +52,15 @@ export class Chicken extends Container {
         this.jumpView.play();
         this.idleView.stop();
 
+        sound.play(AssetsDB.audio.jump);
+
         gsap.to(this, {
             duration: duration,
             x: x,
             ease: "power1.inOut",
             onComplete: () => {
+                sound.stop(AssetsDB.audio.jump);
+
                 this._isJumping = false;
 
                 this.jumpView.visible = false;

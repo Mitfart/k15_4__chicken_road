@@ -6,8 +6,12 @@ import Header, {HeaderScreen} from "../UI/Header.ts";
 import Contols, {ControlsScreen} from "../UI/Contols.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, Play} from "../../plugins/Utils/Animations.ts";
-import VFX from "../VFX/VFX.ts";
 import Packshot from "../UI/Packshot.ts";
+import Chest from "../UI/Chest.ts";
+import Wheel from "../UI/Wheel.ts";
+import {sound} from "@pixi/sound";
+import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
+import sdk from "@smoud/playable-sdk";
 
 
 let _game!: Game;
@@ -15,6 +19,16 @@ let _game!: Game;
 let level!: Level;
 const specials: ({ id: number, func: () => void })[] = [
     // { id: 5, (game) => { game.ui.add(...) } }
+    { id: 2, func: async () => {
+        blockInput = true;
+        await Chest.Show(_game, () => blockInput = false);
+    } },
+    { id: 6, func: async () => {
+        sound.play(AssetsDB.audio.wheel);
+
+        blockInput = true;
+        await Wheel.Show(_game, () => blockInput = false);
+    } }
 ];
 
 let chicken!: Chicken;
@@ -61,7 +75,7 @@ export async function Main(game: Game) {
     level.nextSegment?.target();
     level.startRandomDriveThrow();
 
-    playFunction = play;
+    sound.play(AssetsDB.audio.music);
 
     // ===========================================================================================
 
@@ -74,7 +88,7 @@ export async function Main(game: Game) {
         blockInput = true;
 
         playBtnAnim();
-        playFunction();
+        play();
     });
 
     // ===========================================================================================
@@ -90,6 +104,8 @@ async function play() {
 
     level.currentSegmentID++;
 
+    sound.play(AssetsDB.audio.click);
+
     level.prevSegment?.complete();
 
     chicken.jumpTo(level.currentPosition, level.position.y, async () => {
@@ -99,6 +115,7 @@ async function play() {
         const special = specials.find(s => s.id === level.currentSegmentID);
         if (special) {
             special.func();
+            return;
         } else {
             setScore(level.currentSegment?.value || 0);
         }
@@ -110,6 +127,12 @@ async function play() {
 
             const packshot = await Packshot.Construct(_game);
             packshot.container.show();
+
+            OnClick(packshot.btn, () => {
+                sound.play(AssetsDB.audio.click);
+
+                sdk.install();
+            });
 
             await Bank.Hide();
         } else {

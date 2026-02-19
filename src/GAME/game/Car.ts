@@ -3,6 +3,7 @@ import {AnimatedSprite, Assets, Container} from "pixi.js";
 import {gsap} from "gsap";
 import {randomFrom} from "../../../plugins/Utils/utils.ts";
 import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
+import {sound} from "@pixi/sound";
 
 export class Car extends Container {
     constructor(requiredWidth: number) {
@@ -25,19 +26,23 @@ export class Car extends Container {
         return this._isRacing;
     }
 
-    public rideFromTo(from: number, to: number, duration: number, hideOnComplete: boolean = false) {
+    public async rideFromTo(from: number, to: number, duration: number, hideOnComplete: boolean = false) {
         this.visible = true;
         this._isRacing = true;
+
+        sound.play(AssetsDB.audio.car);
 
         setTimeout(() => {
             this._isRacing = false;
         }, duration * 1000 * .1);
 
         this.y = from;
-        gsap.to(this, {
+        await gsap.to(this, {
             duration: duration,
             y: to,
             onComplete: () => {
+                sound.stop(AssetsDB.audio.car);
+
                 if (hideOnComplete) this.hide();
             }
         });

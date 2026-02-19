@@ -46,7 +46,7 @@ export async function Main(game: Game) {
             h / level.height
         ));
 
-        level.position.set(0, h * .5 / game.container.scale.y);
+        level.position.set(0, h * .4 / game.container.scale.y);
 
         chicken.position.set(level.currentPosition, level.position.y);
     });

@@ -43,7 +43,6 @@ export default class MainTutorial {
 
         const container = game.ui.add(new Container(), WidgetRoot.CENTER);
         container.sortableChildren = true;
-        container.zIndex = 1000;
         container.eventMode = "static";
 
         const overlay = container.addChild(new Graphics());
@@ -57,7 +56,6 @@ export default class MainTutorial {
         outlineGraphics.eventMode = "none";
 
         const closeBtn = container.addChild(new Graphics());
-        closeBtn.zIndex = 10;
         closeBtn.eventMode = "static";
         closeBtn.cursor = "pointer";
 

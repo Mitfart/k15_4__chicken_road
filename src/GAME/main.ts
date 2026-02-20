@@ -119,8 +119,13 @@ export async function Main(game: Game) {
         rotation: Math.PI,
     });
 
+    blockInput = true;
     const mainTutorial = await MainTutorial.Construct(game, header, controls, {
-        onHide: () => handTutorialGo.show(),
+        onShow: () => blockInput = true,
+        onHide: () => {
+            blockInput = false;
+            handTutorialGo.show();
+        },
     });
     await mainTutorial.show();
 

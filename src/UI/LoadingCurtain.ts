@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import {Assets, Container, Graphics, Sprite, Text} from "pixi.js";
+import {Assets, BlurFilter, Container, Graphics, Sprite, Text} from "pixi.js";
 
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
@@ -62,7 +62,8 @@ export default class LoadingCurtain {
             return this._curtain;
 
         const background = await AddBackground(AssetsDB.texture.loading_background);
-        const cover = AddCover(.5, Number.EPSILON);
+        background.filters = [ new BlurFilter({ strength: 5 }) ];
+        const cover = AddCover(.75, Number.EPSILON);
         cover.show();
 
         game.resize();

@@ -49,7 +49,14 @@ export default class Bank {
 
         this._bank ??= await this.Construct(game, transactionDuration);
 
-        await this._bank.screen.show()
+        this._bank.screen.y = APP_CONFIG.designSize.y;
+        await Promise.all([
+            gsap.to(this._bank.screen, {
+                duration: this._bank.screen.animDuration,
+                y: APP_CONFIG.designSize.y / 2
+            }),
+            this._bank.screen.show()
+        ]);
 
         await this.Animate(this._bank, transactionDuration);
     }

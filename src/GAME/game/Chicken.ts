@@ -11,6 +11,7 @@ gsap.registerPlugin(PixiPlugin);
 export class Chicken extends Container {
     private idleView!: AnimatedSprite;
     private jumpView!: AnimatedSprite;
+    private winView!: AnimatedSprite;
 
     private _balanceBlock!: Container;
     private _balanceTxt!: Text;
@@ -98,12 +99,18 @@ export class Chicken extends Container {
         this.idleView = this.addChild(AnimatedSprite.fromFrames(animations["idle"]));
         this.idleView.anchor.set(origin.x, origin.y);
         this.idleView.visible = true;
-        this.idleView.animationSpeed = 1 / 5;
+        this.idleView.animationSpeed = 1 / animations["idle"].length;
         this.idleView.play();
 
         this.jumpView = this.addChild(AnimatedSprite.fromFrames(animations["jump"]));
         this.jumpView.anchor.set(origin.x, origin.y);
         this.jumpView.visible = false;
+
+        this.winView = this.addChild(AnimatedSprite.fromFrames(animations["win"]));
+        this.winView.anchor.set(origin.x, origin.y);
+        this.winView.visible = false;
+        this.winView.animationSpeed = 1 / animations["win"].length * 5;
+        this.winView.loop = true;
 
         this._balanceBlock = this.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.chicken_bage),
@@ -125,5 +132,15 @@ export class Chicken extends Container {
             anchor: .5,
             y: 5
         }));
+    }
+
+    public playWin() {
+        this.idleView.visible = false;
+        this.jumpView.visible = false;
+        this.winView.visible = true;
+
+        this.idleView.stop();
+        this.jumpView.stop();
+        this.winView.play();
     }
 }

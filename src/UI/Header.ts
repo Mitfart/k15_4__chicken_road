@@ -33,12 +33,26 @@ export default class Header {
         ]);
 
         const width = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
-        const height = 150;
-        const stroke = height / 4;
+        const height = 100;
+        const stroke = height / 8;
 
-        const container = game.ui.add(new Container(), WidgetRoot.TOP);
+        const container = game.ui.add(
+            new Container(),
+            WidgetRoot.TOP,
+            { x: 0, y: -stroke });
 
         const background = container.addChild(new Graphics());
+        game.resizer.addResizeAction((w) => {
+            background
+                .clear()
+                .rect(-w / 2, -height / 2, w, height)
+                .stroke({
+                    width: stroke,
+                    color: '#333333',
+                    alignment: 0
+                })
+                .fill('#434343');
+        });
 
         const logo = container.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.logo),
@@ -47,8 +61,8 @@ export default class Header {
         }));
 
         const balanceBlockSize = {
-            x: height * 2,
-            y: height * 0.5
+            x: height * 3.5,
+            y: height * .75
         }
 
         const balanceBlock = container.addChild(new Graphics()
@@ -66,27 +80,8 @@ export default class Header {
             anchor: .5
         }, 0, .5, '', ' EUR', 1));
 
-
-        logo.position.set(
-            -width / 2,
-            -stroke / 2
-        );
-
-        balanceBlock.position.set(
-            width / 2 - balanceBlock.width / 2,
-            -stroke / 2
-        );
-
-        game.resizer.addResizeAction((w) => {
-            background
-                .clear()
-                .rect(-w / 2, -height / 2 - stroke, w, height)
-                .stroke({
-                    width: stroke,
-                    color: '#333333',
-                })
-                .fill('#434343');
-        });
+        logo.x = -width / 2;
+        balanceBlock.x = width / 2 - balanceBlock.width / 2;
 
         return this._header = {
             container,

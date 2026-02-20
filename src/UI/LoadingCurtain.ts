@@ -43,20 +43,21 @@ export default class LoadingCurtain {
             .to(this._curtain.fill, {
                 duration: .15 * duration,
                 width: initWidth,
-            })
-            .call((() => {
-                game.ui.remove(this._curtain.view);
-                this._curtain.other.forEach(other => game.ui.remove(other));
-
-                this._curtain.view.destroy();
-                this._curtain.other.forEach(other => other.destroy());
-            }));
+            });
 
         await timeline.play();
     }
 
+    public static Hide(game: Game) {
+        game.ui.remove(this._curtain.view);
+        this._curtain.other.forEach(other => game.ui.remove(other));
 
-    private static async Construct(game: Game): Promise<Curtain> {
+        this._curtain.view.destroy();
+        this._curtain.other.forEach(other => other.destroy());
+    }
+
+
+    public static async Construct(game: Game): Promise<Curtain> {
         if (this._curtain)
             return this._curtain;
 
@@ -67,9 +68,9 @@ export default class LoadingCurtain {
         game.resize();
 
         await Promise.all([
+            AssetsBase64.load(AssetsDB.font.Cera, "font"),
             AssetsBase64.load(AssetsDB.texture.loading_logo, "texture"),
             AssetsBase64.load(AssetsDB.texture.loading_border, "texture"),
-            AssetsBase64.load(AssetsDB.font.Cera, "font"),
         ]);
 
         const view = game.ui.add(new Container(), WidgetRoot.CENTER);

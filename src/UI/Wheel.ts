@@ -80,7 +80,7 @@ class Wheel {
         const screen = game.ui.add(new ScreenContainer(0.5, 1), WidgetRoot.CENTER);
 
         const wheelTexture = Assets.get(AssetsDB.texture.rool);
-        const arrowTexture = Assets.get(AssetsDB.texture.arroe);
+        const arrowTexture = Assets.get(AssetsDB.texture.arrow);
 
         const wheelSprite = screen.addChild(new Sprite({
             texture: wheelTexture,

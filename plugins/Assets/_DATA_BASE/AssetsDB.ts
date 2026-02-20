@@ -59,7 +59,7 @@ export const AssetsDB = {
     "packshot_chicken": "packshot_chicken",
     "packshot_google": "packshot_google",
     "bonus_panel": "bonus_panel",
-    "arroe": "arroe",
+    "arrow": "arrow",
     "rool": "rool",
     "spine": "spine",
     "vfx_coins_tex": "vfx_coins_tex",

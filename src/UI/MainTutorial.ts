@@ -34,7 +34,8 @@ export default class MainTutorial {
     public static async Construct(
         game: Game,
         header: HeaderScreen,
-        controls: ControlsScreen
+        controls: ControlsScreen,
+        options?: { onHide?: () => void }
     ): Promise<MainTutorialScreen> {
         if (this._tutorial) return this._tutorial;
 
@@ -58,7 +59,7 @@ export default class MainTutorial {
         closeBtn.eventMode = "static";
         closeBtn.cursor = "pointer";
 
-        const closeSize = 44;
+        const closeSize = 56;
         closeBtn
             .roundRect(-closeSize / 2, -closeSize / 2, closeSize, closeSize, closeSize / 4)
             .fill({ color: 0x333333, alpha: 0.9 });
@@ -113,7 +114,7 @@ export default class MainTutorial {
             hintTexts.push(text);
         }
 
-        const reopenSize = 56;
+        const reopenSize = 72;
         const reopenBtn = container.addChild(new Graphics());
         reopenBtn.zIndex = 10;
         reopenBtn.eventMode = "static";
@@ -214,8 +215,9 @@ export default class MainTutorial {
                 }
             }
 
+            const headerHeight = 150 + 150 / 4;
             const cornerX = rw / 2 - 16;
-            const cornerY = -rh / 2 + 16;
+            const cornerY = -rh / 2 + headerHeight - 8;
             closeBtn.position.set(cornerX - closeSize / 2, cornerY + closeSize / 2);
             reopenBtn.position.set(cornerX - reopenSize / 2, cornerY + reopenSize / 2);
         };
@@ -254,6 +256,7 @@ export default class MainTutorial {
             closeBtn.visible = false;
             reopenBtn.visible = true;
             container.alpha = 1;
+            options?.onHide?.();
         };
 
         OnClick(closeBtn, hide);

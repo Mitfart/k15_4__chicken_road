@@ -24,10 +24,12 @@ export type HandTutorialInstance = {
 export function CreateHandTutorial(
     game: Game,
     targetButton: Container,
-    options?: { scale?: number; tapInterval?: number }
+    options?: { scale?: number; tapInterval?: number; offsetY?: number; rotation?: number }
 ): HandTutorialInstance {
     const scale = options?.scale ?? HAND_SCALE;
     const tapInterval = options?.tapInterval ?? TAP_INTERVAL;
+    const offsetY = options?.offsetY ?? 0;
+    const rotation = options?.rotation ?? 0;
 
     const container = game.ui.add(new Container(), WidgetRoot.CENTER);
     container.sortableChildren = true;
@@ -42,6 +44,7 @@ export function CreateHandTutorial(
         texture: handTex,
         anchor: { x: 0.5, y: 0.9 },
         scale,
+        rotation,
     }));
     hand.eventMode = "none";
 
@@ -79,7 +82,7 @@ export function CreateHandTutorial(
 
         const bounds = targetButton.getBounds(true);
         const centerX = (bounds.minX + bounds.maxX) / 2;
-        const centerY = (bounds.minY + bounds.maxY) / 2;
+        const centerY = (bounds.minY + bounds.maxY) / 2 + offsetY;
         const localPos = container.parent.toLocal({ x: centerX, y: centerY });
         container.position.set(localPos.x, localPos.y);
     };

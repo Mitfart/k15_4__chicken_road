@@ -113,11 +113,15 @@ export async function Main(game: Game) {
     controls = await Contols.Construct(game);
     const playBtnAnim = Play(AnimPulseIn(controls.playBtn, .25, .5));
 
-    const mainTutorial = await MainTutorial.Construct(game, header, controls);
-    await mainTutorial.show();
+    const handTutorialGo = CreateHandTutorial(_game, controls.playBtn, {
+        offsetY: -50,
+        rotation: Math.PI,
+    });
 
-    const handTutorialGo = CreateHandTutorial(_game, controls.playBtn);
-    handTutorialGo.show();
+    const mainTutorial = await MainTutorial.Construct(game, header, controls, {
+        onHide: () => handTutorialGo.show(),
+    });
+    await mainTutorial.show();
 
     OnClick(controls.playBtn, () => {
         if (blockInput) return;

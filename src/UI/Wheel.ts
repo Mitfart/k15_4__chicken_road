@@ -14,6 +14,10 @@ import {sound} from "@pixi/sound";
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
 
+
+
+const SECTOR_OFFSET = -Math.PI / 6;
+
 export type WheelScreen = {
     screen: ScreenContainer;
     cover: Cover;
@@ -72,8 +76,6 @@ class Wheel {
         const screen = game.ui.add(new ScreenContainer(0.5, 1), WidgetRoot.CENTER);
 
         const wheelTexture = Assets.get(AssetsDB.texture.rool);
-
-        const SECTOR_OFFSET = -Math.PI / 6;
 
         const wheelSprite = screen.addChild(new Sprite({
             texture: wheelTexture,
@@ -149,7 +151,7 @@ class Wheel {
     private static spinWheel(): void {
         if (!this._wheel || this._wheel.isSpinning) return;
 
-        sound.play(AssetsDB.audio.Wheel);
+        sound.play(AssetsDB.audio.wheel);
 
         this._wheel.isSpinning = true;
 
@@ -157,20 +159,17 @@ class Wheel {
         this._wheel.spinButton.cursor = 'default';
         this._wheel.spinButton.alpha = 0.7;
 
-        const fullRotations = 5 + Math.random() * 3;
-        const targetAngleRadians = (5 * Math.PI) / 3;
+        const fullRotations = 5;
+        const finalRotation = Math.PI * 2 * fullRotations - SECTOR_OFFSET;
 
-        const currentRotation = this._wheel.wheelSprite.rotation;
-        const finalRotation = currentRotation + (fullRotations * Math.PI * 2) + targetAngleRadians;
-
-        const spinDuration = 3 + Math.random();
+        const spinDuration = 3.5;
 
         this._spinAnimation = gsap.to(this._wheel.wheelSprite, {
             rotation: finalRotation,
             duration: spinDuration,
             ease: "power2.out",
             onComplete: () => {
-                sound.stop(AssetsDB.audio.Wheel);
+                sound.stop(AssetsDB.audio.wheel);
 
                 this.onSpinComplete();
             }

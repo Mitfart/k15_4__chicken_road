@@ -15,8 +15,10 @@ gsap.registerPlugin(PixiPlugin);
 
 export type ControlsScreen = {
     container: Container,
-    balanceTxt: AnimatedText,
-    playBtn: Container
+    topPanel: Sprite,
+    playBtn: Container,
+    cashBtn: Container,
+    balanceTxt: AnimatedText
 }
 
 export default class Contols {
@@ -96,8 +98,10 @@ export default class Contols {
 
         return this._controls = {
             container: screen,
-            balanceTxt,
-            playBtn
+            topPanel,
+            playBtn,
+            cashBtn,
+            balanceTxt
         };
     }
 }

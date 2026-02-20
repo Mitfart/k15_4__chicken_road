@@ -15,6 +15,7 @@ gsap.registerPlugin(PixiPlugin);
 
 export type HeaderScreen = {
     container: Container,
+    balanceBlock: Graphics,
     balanceTxt: AnimatedText
 }
 
@@ -84,6 +85,7 @@ export default class Header {
 
         return this._header = {
             container: header,
+            balanceBlock,
             balanceTxt
         };
     }

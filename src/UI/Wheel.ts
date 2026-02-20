@@ -10,13 +10,10 @@ import {Cover} from "../../plugins/Utils/Components/Cover.ts";
 import {OffClick, OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {APP_CONFIG} from "../config.ts";
 import {sound} from "@pixi/sound";
+import {CreateHandTutorial} from "./HandTutorial.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
-
-
-
-const SECTOR_OFFSET = -Math.PI / 6;
 
 export type WheelScreen = {
     screen: ScreenContainer;
@@ -24,6 +21,7 @@ export type WheelScreen = {
     wheelSprite: Sprite;
     spinButton: Graphics | Sprite;
     spinButtonText: Text | null;
+    winText: Text;
     isSpinning: boolean;
     isDisabled: boolean;
     onComplete?: () => void;
@@ -46,7 +44,10 @@ class Wheel {
             this._wheel.screen.show()
         ]);
 
-        this.activateSpinButton();
+        const handTutorialSpin = CreateHandTutorial(game, this._wheel.spinButton, { scale: 1.5 });
+        handTutorialSpin.show();
+
+        this.activateSpinButton(handTutorialSpin);
     }
 
     private static async Hide(): Promise<void> {
@@ -56,6 +57,9 @@ class Wheel {
             this._spinAnimation.kill();
             this._spinAnimation = null;
         }
+
+        this._handTutorialSpin?.destroy();
+        this._handTutorialSpin = null;
 
         if (this._wheel.onComplete)
             this._wheel.onComplete();
@@ -76,14 +80,16 @@ class Wheel {
         const screen = game.ui.add(new ScreenContainer(0.5, 1), WidgetRoot.CENTER);
 
         const wheelTexture = Assets.get(AssetsDB.texture.rool);
+        const arrowTexture = Assets.get(AssetsDB.texture.arroe);
 
         const wheelSprite = screen.addChild(new Sprite({
             texture: wheelTexture,
             anchor: {x: 0.5, y: 0.5}
         }));
-        wheelSprite.rotation = SECTOR_OFFSET;
+        wheelSprite.rotation = 0;
 
         const wheelSize = APP_CONFIG.designSize.x * 0.9;
+
         wheelSprite.scale.set(wheelSize / Math.max(wheelTexture.width, wheelTexture.height));
 
         const spinButtonTexture = Assets.get(AssetsDB.texture.spine);
@@ -121,12 +127,36 @@ class Wheel {
         spinButton.eventMode = 'static';
         spinButton.cursor = 'pointer';
 
+        const arrowSprite = screen.addChild(new Sprite({
+            texture: arrowTexture,
+            anchor: {x: 0.5, y: 0.5}
+        }));
+        arrowSprite.position.y = -wheelSize / 2 + 30;
+        arrowSprite.scale.set(wheelSize * 0.14 / Math.max(arrowTexture.width, arrowTexture.height));
+
+        const winText = screen.addChild(new Text({
+            text: "300х",
+            style: {
+                fontFamily: APP_CONFIG.fontFamily,
+                fontSize: wheelSize * 0.3,
+                fontWeight: 'bold',
+                fill: '#FFC700',
+                stroke: {width: wheelSize * 0.015, color: '#FF8C00'},
+                align: 'center'
+            },
+            anchor: {x: 0.5, y: 0.5}
+        }));
+        winText.position.set(0, 0);
+        winText.alpha = 0;
+        winText.visible = false;
+
         return {
             screen,
             cover,
             wheelSprite,
             spinButton,
             spinButtonText,
+            winText,
             isSpinning: false,
             isDisabled: false,
             onComplete,
@@ -134,12 +164,19 @@ class Wheel {
         };
     }
 
-    private static activateSpinButton(): void {
+    private static _handTutorialSpin: ReturnType<typeof CreateHandTutorial> | null = null;
+
+    private static _onSpinWithHand = (): void => {
+        this._handTutorialSpin?.hide();
+        this.onSpinClick();
+    };
+
+    private static activateSpinButton(handTutorial?: ReturnType<typeof CreateHandTutorial>): void {
         if (!this._wheel) return;
 
-        OffClick(this._wheel.spinButton, this.onSpinClick);
-
-        OnClick(this._wheel.spinButton, this.onSpinClick);
+        this._handTutorialSpin = handTutorial ?? this._handTutorialSpin;
+        OffClick(this._wheel.spinButton, this._onSpinWithHand);
+        OnClick(this._wheel.spinButton, this._onSpinWithHand);
     }
 
     private static onSpinClick = (): void => {
@@ -159,10 +196,17 @@ class Wheel {
         this._wheel.spinButton.cursor = 'default';
         this._wheel.spinButton.alpha = 0.7;
 
-        const fullRotations = 5;
-        const finalRotation = Math.PI * 2 * fullRotations - SECTOR_OFFSET;
+        const SECTORS_COUNT = 6;
+        const TARGET_SECTOR = 6;
+        const DEGREES_PER_SECTOR = 360 / SECTORS_COUNT;
+        const HALF_SECTOR = DEGREES_PER_SECTOR / 2;
+        const TEXTURE_OFFSET_DEG = 0;
 
-        const spinDuration = 3.5;
+        const fullRotations = 5 + Math.random() * 3;
+        const sector6CenterDeg = (TARGET_SECTOR - 1) * DEGREES_PER_SECTOR + HALF_SECTOR + TEXTURE_OFFSET_DEG;
+        const finalRotation = fullRotations * Math.PI * 2 + (sector6CenterDeg * Math.PI / 180);
+
+        const spinDuration = 3 + Math.random();
 
         this._spinAnimation = gsap.to(this._wheel.wheelSprite, {
             rotation: finalRotation,
@@ -182,20 +226,36 @@ class Wheel {
         this._wheel.isSpinning = false;
         this._wheel.isDisabled = true;
 
-        OffClick(this._wheel.spinButton, this.onSpinClick);
+        OffClick(this._wheel.spinButton, this._onSpinWithHand);
 
         this._wheel.spinButton.alpha = 0.5;
         if (this._wheel.spinButtonText) {
             this._wheel.spinButtonText.text = "DONE";
         }
 
-        if (this._wheel.onComplete) {
-            this._wheel.onComplete();
-        }
-
-        setTimeout(() => {
-            this.Hide();
-        }, 2000);
+        // Показываем текст "300х" с анимацией
+        this._wheel.winText.visible = true;
+        this._wheel.winText.scale.set(0.8);
+        gsap.to(this._wheel.winText.scale, {
+            x: 1.2,
+            y: 1.2,
+            duration: 0.5,
+            ease: "back.out"
+        });
+        gsap.to(this._wheel.winText, {
+            alpha: 1,
+            duration: 0.5,
+            ease: "power2.out",
+            onComplete: () => {
+                // После показа текста, через некоторое время скрываем все
+                setTimeout(() => {
+                    if (this._wheel?.onComplete) {
+                        this._wheel.onComplete();
+                    }
+                    this.Hide();
+                }, 1500);
+            }
+        });
     }
 }
 

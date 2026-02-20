@@ -53,8 +53,6 @@ export default class Chest {
     public static async Hide(): Promise<void> {
         if (!this._chest) return;
 
-        if (this._chest.onComplete) this._chest.onComplete();
-
         await Promise.all([
             this._chest.cover.hide(),
             this._chest.screen.hide()
@@ -96,22 +94,16 @@ export default class Chest {
             game
         };
     }
+
     private static waitForOpenClick(): void {
-        if (!this._chest) return;
-
-        OnClick(this._chest.screen, () => {
-            if (!this._chest) return;
-
-            if (!this._chest.isOpened) {
+        OnClick(this._chest.screen, async () => {
+            if (!this._chest.isOpened)
                 this.openChest();
-            } else {
-                Panel.Hide().then(() => Chest.Hide());
-            }
         });
     }
 
     private static async openChest(): Promise<void> {
-        if (!this._chest || this._chest.isOpened) return;
+        if (this._chest.isOpened) return;
 
         this._chest.isOpened = true;
         this._chest.chestSprite.stop();
@@ -132,8 +124,13 @@ export default class Chest {
                 amountText: "1000 EUR",
                 buttonText: "CLAIM",
                 onClaim: async () => {
-                    await Panel.Hide();
-                    await Chest.Hide();
+                    await Promise.all([
+                        Panel.Hide(),
+                        Chest.Hide(),
+                    ]);
+
+                    if (this._chest.onComplete)
+                        this._chest.onComplete();
                 }
             });
         };

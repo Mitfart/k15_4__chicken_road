@@ -65,9 +65,6 @@ class Wheel {
         this._handTutorialSpin?.destroy();
         this._handTutorialSpin = null;
 
-        if (this._wheel.onComplete)
-            this._wheel.onComplete();
-
         await Promise.all([
             this._wheel.screen.hide(),
             this._wheel.cover.hide(),
@@ -90,7 +87,6 @@ class Wheel {
             texture: wheelTexture,
             anchor: {x: 0.5, y: 0.5}
         }));
-        wheelSprite.rotation = 0;
 
         const wheelSize = APP_CONFIG.designSize.x * 0.9;
 
@@ -144,8 +140,11 @@ class Wheel {
                 fontFamily: APP_CONFIG.fontFamily,
                 fontSize: wheelSize * 0.3,
                 fontWeight: 'bold',
-                fill: '#FFC700',
-                stroke: {width: wheelSize * 0.015, color: '#FF8C00'},
+                fill: '#feff00',
+                stroke: {
+                    width: wheelSize * 0.015,
+                    color: '#5e2500'
+                },
                 align: 'center'
             },
             anchor: {x: 0.5, y: 0.5}
@@ -200,17 +199,10 @@ class Wheel {
         this._wheel.spinButton.cursor = 'default';
         this._wheel.spinButton.alpha = 0.7;
 
-        const SECTORS_COUNT = 6;
-        const TARGET_SECTOR = 6;
-        const DEGREES_PER_SECTOR = 360 / SECTORS_COUNT;
-        const HALF_SECTOR = DEGREES_PER_SECTOR / 2;
-        const TEXTURE_OFFSET_DEG = 0;
+        const fullRotations = 5;
+        const finalRotation = fullRotations * Math.PI * 2 + (Math.PI * 2 / 6 * 7);
 
-        const fullRotations = 5 + Math.random() * 3;
-        const sector6CenterDeg = (TARGET_SECTOR - 1) * DEGREES_PER_SECTOR + HALF_SECTOR + TEXTURE_OFFSET_DEG;
-        const finalRotation = fullRotations * Math.PI * 2 + (sector6CenterDeg * Math.PI / 180);
-
-        const spinDuration = 3 + Math.random();
+        const spinDuration = 3.5;
 
         this._spinAnimation = gsap.to(this._wheel.wheelSprite, {
             rotation: finalRotation,
@@ -229,6 +221,9 @@ class Wheel {
 
         this._wheel.isSpinning = false;
         this._wheel.isDisabled = true;
+
+        if (this._wheel.onComplete)
+            this._wheel.onComplete();
 
         OffClick(this._wheel.spinButton, this._onSpinWithHand);
 
@@ -253,9 +248,6 @@ class Wheel {
             onComplete: () => {
                 // После показа текста, через некоторое время скрываем все
                 setTimeout(() => {
-                    if (this._wheel?.onComplete) {
-                        this._wheel.onComplete();
-                    }
                     this.Hide();
                 }, 1500);
             }

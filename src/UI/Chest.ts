@@ -123,6 +123,9 @@ export default class Chest {
         openSprite.onComplete = () => {
             openSprite.destroy();
 
+            if (this._chest.onComplete)
+                this._chest.onComplete();
+
             Panel.Show(this._chest.game, {
                 text: "CONGRATULATIONS",
                 amountText: "1000 EUR",
@@ -132,9 +135,6 @@ export default class Chest {
                         Panel.Hide(),
                         Chest.Hide(),
                     ]);
-
-                    if (this._chest.onComplete)
-                        this._chest.onComplete();
                 }
             });
         };

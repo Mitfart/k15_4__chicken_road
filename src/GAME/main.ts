@@ -29,19 +29,21 @@ const specials: ({ id: number, func: () => void })[] = [
     // { id: 5, (game) => { game.ui.add(...) } }
     { id: 2, func: async () => {
         blockInput = true;
-        sound.play(AssetsDB.audio.win);
 
         chestLevelView.visible = false;
 
         await Chest.Show(_game, () => {
+            sound.play(AssetsDB.audio.win);
+
             chicken.balanceTxt.text = 'x3.5';
             blockInput = false;
         });
     } },
     { id: 6, func: async () => {
         blockInput = true;
-        sound.play(AssetsDB.audio.win);
         await Wheel.Show(_game, () => {
+            sound.play(AssetsDB.audio.win);
+
             chicken.balanceTxt.text = 'x300';
             blockInput = false;
         });

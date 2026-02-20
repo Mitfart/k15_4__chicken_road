@@ -12,6 +12,7 @@ import {AnimatedText} from "../../plugins/Utils/Components/AnimatedText.ts";
 // @ts-expect-error API
 import Tween = gsap.core.Tween;
 import {APP_CONFIG} from "../config.ts";
+import {sound} from "@pixi/sound";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -244,6 +245,8 @@ export default class Bank {
                 scale: 1,
                 onStart: () => {
                     bank.balanceText.setValue(value, value += transData.value);
+
+                    sound.play(AssetsDB.audio.push);
                 }
             }));
 

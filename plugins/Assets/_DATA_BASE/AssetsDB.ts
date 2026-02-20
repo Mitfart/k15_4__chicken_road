@@ -1,11 +1,13 @@
 export const AssetsDB = {
   "audio": {
     "car": "car",
+    "chest_hit": "chest_hit",
     "click": "click",
-    "coin": "coin",
     "jump": "jump",
     "music": "music",
-    "wheel": "wheel"
+    "push": "push",
+    "wheel": "wheel",
+    "win": "win"
   },
   "font": {
     "Cera": "Cera"

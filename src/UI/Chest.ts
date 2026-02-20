@@ -22,6 +22,7 @@ import {Cover} from "../../plugins/Utils/Components/Cover.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import Panel from "./Panel.ts";
+import {sound} from "@pixi/sound";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -38,6 +39,7 @@ export type ChestScreen = {
 
 export default class Chest {
     private static _chest: ChestScreen;
+
 
     public static async Show(game: Game, onComplete?: () => void): Promise<void> {
         this._chest ??= await this.Construct(game, onComplete);
@@ -108,6 +110,8 @@ export default class Chest {
         this._chest.isOpened = true;
         this._chest.chestSprite.stop();
         this._chest.chestSprite.visible = false;
+
+        sound.play(AssetsDB.audio.chest_hit);
 
         const openFrames = Assets.get(AssetsDB.data.chest).animations["open"];
         const openSprite = this._chest.screen.addChild(AnimatedSprite.fromFrames(openFrames));

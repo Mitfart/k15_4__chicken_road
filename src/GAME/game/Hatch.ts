@@ -4,7 +4,6 @@ import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import {APP_CONFIG} from "../../config.ts";
 import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
-import {sound} from "@pixi/sound";
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
@@ -53,8 +52,6 @@ export class Hatch extends Sprite {
     public complete(duration: number) {
         this.texture = Assets.get(AssetsDB.texture.hatch_complete);
         this._txt.visible = false;
-
-        sound.play(AssetsDB.audio.coin);
 
         gsap.timeline()
             .to(this, {

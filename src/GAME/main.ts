@@ -14,6 +14,8 @@ import sdk from "@smoud/playable-sdk";
 import {delay} from "../../plugins/Utils/utils.ts";
 import VFX from "../VFX/VFX.ts";
 import {Packshot_Horizontal, Packshot_Vertical} from "../UI/Packshot.ts";
+import {ChestLevelView} from "../UI/ChestLevelView.ts";
+import {GAME_CONFIG} from "../game.config.ts";
 
 
 let _game!: Game;
@@ -23,6 +25,7 @@ const specials: ({ id: number, func: () => void })[] = [
     // { id: 5, (game) => { game.ui.add(...) } }
     { id: 2, func: async () => {
         blockInput = true;
+        sound.play(AssetsDB.audio.win);
         await Chest.Show(_game, () => {
             chicken.balanceTxt.text = 'x3.5';
             blockInput = false;
@@ -30,6 +33,7 @@ const specials: ({ id: number, func: () => void })[] = [
     } },
     { id: 6, func: async () => {
         blockInput = true;
+        sound.play(AssetsDB.audio.win);
         await Wheel.Show(_game, () => {
             chicken.balanceTxt.text = 'x300';
             blockInput = false;
@@ -80,7 +84,15 @@ export async function Main(game: Game) {
     level.nextSegment?.target();
     level.startRandomDriveThrow();
 
-    sound.play(AssetsDB.audio.music);
+    const segment = level.getSegment(2);
+    if (segment) {
+        segment.addChild(ChestLevelView()).position.set(
+            GAME_CONFIG.level.segmentSize / 2,
+            -10
+        );
+    }
+
+    sound.play(AssetsDB.audio.music, { volume: .5, });
 
     // ===========================================================================================
 
@@ -144,6 +156,8 @@ async function setScore(value: number) {
 
 
 async function finish() {
+    sound.play(AssetsDB.audio.win);
+
     await delay(.5);
 
     const confetti = _game.container.addChild(VFX.confetti());

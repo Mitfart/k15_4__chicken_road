@@ -5,6 +5,6 @@ export const APP_CONFIG: GameConfig = {
     background: "#706a69",
     REM: 32,
     padding: {x: 32, y: 32},
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: "Cera, Arial, sans-serif",
     uiScale: { min: 1, max: 1 },
 }

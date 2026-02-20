@@ -6,7 +6,6 @@ import Header, {HeaderScreen} from "../UI/Header.ts";
 import Contols, {ControlsScreen} from "../UI/Contols.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, AnimScale, Play} from "../../plugins/Utils/Animations.ts";
-import Packshot from "../UI/Packshot.ts";
 import Chest from "../UI/Chest.ts";
 import Wheel from "../UI/Wheel.ts";
 import {sound} from "@pixi/sound";
@@ -14,6 +13,7 @@ import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import sdk from "@smoud/playable-sdk";
 import {delay} from "../../plugins/Utils/utils.ts";
 import VFX from "../VFX/VFX.ts";
+import {Packshot_Horizontal, Packshot_Vertical} from "../UI/Packshot.ts";
 
 
 let _game!: Game;
@@ -123,13 +123,11 @@ async function play() {
         if (special) {
             special.func();
             return;
+        } else if (level.currentSegmentID >= level.length - 1) {
+            await finish();
+            return
         } else {
             setScore(level.currentSegment?.value || 0);
-        }
-
-        if (level.currentSegmentID >= level.length - 1) {
-            await finish();
-        } else {
             chicken.balanceTxt.text = level.currentSegment?.value_view ?? '';
             blockInput = false;
         }
@@ -161,14 +159,21 @@ async function finish() {
 
     await delay(.5);
 
-    const packshot = await Packshot.Construct(_game);
-    packshot.container.show();
 
-    OnClick(packshot.btn, () => {
+    const packshot_ver = await Packshot_Vertical.Construct(_game);
+    packshot_ver.screen.show();
+
+    const packshot_hor = await Packshot_Horizontal.Construct(_game);
+    packshot_hor.screen.show();
+
+    const install = () => {
         sound.play(AssetsDB.audio.click);
 
         sdk.install();
-    });
+    };
+
+    OnClick(packshot_ver.btn, install);
+    OnClick(packshot_hor.btn, install);
 
     await Bank.Hide();
 }

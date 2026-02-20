@@ -4,6 +4,8 @@ import {Chicken} from "./game/Chicken.ts";
 import Bank from "../UI/Bank.ts";
 import Header, {HeaderScreen} from "../UI/Header.ts";
 import Contols, {ControlsScreen} from "../UI/Contols.ts";
+import MainTutorial from "../UI/MainTutorial.ts";
+import {CreateHandTutorial} from "../UI/HandTutorial.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, AnimScale, Play} from "../../plugins/Utils/Animations.ts";
 import Chest from "../UI/Chest.ts";
@@ -111,8 +113,15 @@ export async function Main(game: Game) {
     controls = await Contols.Construct(game);
     const playBtnAnim = Play(AnimPulseIn(controls.playBtn, .25, .5));
 
+    const mainTutorial = await MainTutorial.Construct(game, header, controls);
+    await mainTutorial.show();
+
+    const handTutorialGo = CreateHandTutorial(_game, controls.playBtn);
+    handTutorialGo.show();
+
     OnClick(controls.playBtn, () => {
         if (blockInput) return;
+        handTutorialGo.hide();
         blockInput = true;
 
         playBtnAnim();

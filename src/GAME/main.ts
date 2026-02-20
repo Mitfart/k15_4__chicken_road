@@ -16,6 +16,7 @@ import VFX from "../VFX/VFX.ts";
 import {Packshot_Horizontal, Packshot_Vertical} from "../UI/Packshot.ts";
 import {ChestLevelView} from "../UI/ChestLevelView.ts";
 import {GAME_CONFIG} from "../game.config.ts";
+import {Container} from "pixi.js";
 
 
 let _game!: Game;
@@ -26,6 +27,9 @@ const specials: ({ id: number, func: () => void })[] = [
     { id: 2, func: async () => {
         blockInput = true;
         sound.play(AssetsDB.audio.win);
+
+        chestLevelView.visible = false;
+
         await Chest.Show(_game, () => {
             chicken.balanceTxt.text = 'x3.5';
             blockInput = false;
@@ -53,6 +57,8 @@ let score: number = 0;
 
 let header!: HeaderScreen;
 let controls!: ControlsScreen;
+
+let chestLevelView!: Container;
 
 
 export async function Main(game: Game) {
@@ -86,7 +92,8 @@ export async function Main(game: Game) {
 
     const segment = level.getSegment(2);
     if (segment) {
-        segment.addChild(ChestLevelView()).position.set(
+        chestLevelView = segment.addChild(ChestLevelView());
+        chestLevelView.position.set(
             GAME_CONFIG.level.segmentSize / 2,
             -10
         );

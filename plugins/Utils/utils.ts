@@ -33,6 +33,12 @@ export function isString(val: any): boolean {
 
 // =====================================================================================
 
+export function delay(duration: number) {
+    return new Promise((resolve) => setTimeout(resolve, duration * 1000) );
+}
+
+// =====================================================================================
+
 /* eslint-disable */
 export function debounceFunc(func: (...args: any) => void, ...args: any) {
     const delay = 100;

@@ -12,6 +12,8 @@ import Wheel from "../UI/Wheel.ts";
 import {sound} from "@pixi/sound";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import sdk from "@smoud/playable-sdk";
+import {delay} from "../../plugins/Utils/utils.ts";
+import VFX from "../VFX/VFX.ts";
 
 
 let _game!: Game;
@@ -126,20 +128,7 @@ async function play() {
         }
 
         if (level.currentSegmentID >= level.length - 1) {
-            await Bank.Show(_game, 2);
-
-            await new Promise((resolve) => setTimeout(resolve, 500) );
-
-            const packshot = await Packshot.Construct(_game);
-            packshot.container.show();
-
-            OnClick(packshot.btn, () => {
-                sound.play(AssetsDB.audio.click);
-
-                sdk.install();
-            });
-
-            await Bank.Hide();
+            await finish();
         } else {
             chicken.balanceTxt.text = level.currentSegment?.value_view ?? '';
             blockInput = false;
@@ -153,4 +142,33 @@ async function setScore(value: number) {
     controls.balanceTxt.setValue(score, value);
 
     score = value;
+}
+
+
+async function finish() {
+    await delay(.5);
+
+    const confetti = _game.container.addChild(VFX.confetti());
+    confetti.scale = 1.5;
+    confetti.position.set(
+        level.x + chicken.x,
+        level.y - 25
+    );
+
+    chicken.playWin();
+
+    await Bank.Show(_game, 2);
+
+    await delay(.5);
+
+    const packshot = await Packshot.Construct(_game);
+    packshot.container.show();
+
+    OnClick(packshot.btn, () => {
+        sound.play(AssetsDB.audio.click);
+
+        sdk.install();
+    });
+
+    await Bank.Hide();
 }

@@ -17,6 +17,7 @@ import {Packshot_Horizontal, Packshot_Vertical} from "../UI/Packshot.ts";
 import {ChestLevelView} from "../UI/ChestLevelView.ts";
 import {GAME_CONFIG} from "../game.config.ts";
 import {Container} from "pixi.js";
+import {OnlineUsers} from "../UI/OnlineUsers.ts";
 
 
 let _game!: Game;
@@ -104,6 +105,9 @@ export async function Main(game: Game) {
     // ===========================================================================================
 
     header = await Header.Construct(game);
+
+    await OnlineUsers.Construct(game);
+
     controls = await Contols.Construct(game);
     const playBtnAnim = Play(AnimPulseIn(controls.playBtn, .25, .5));
 

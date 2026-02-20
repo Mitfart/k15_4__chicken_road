@@ -30,8 +30,6 @@ export const AssetsDB = {
     "level_divider": "level_divider",
     "level_finish": "level_finish",
     "level_start": "level_start",
-    "rool": "rool",
-    "spine": "spine",
     "434x0w": "434x0w",
     "Bank": "Bank",
     "icon_amazon": "icon_amazon",
@@ -56,6 +54,9 @@ export const AssetsDB = {
     "packshot_btn": "packshot_btn",
     "packshot_chicken": "packshot_chicken",
     "packshot_google": "packshot_google",
+    "bonus_panel": "bonus_panel",
+    "rool": "rool",
+    "spine": "spine",
     "vfx_coins_tex": "vfx_coins_tex",
     "vfx_confetti_tex": "vfx_confetti_tex"
   }

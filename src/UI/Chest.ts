@@ -22,6 +22,7 @@ import {ScreenContainer} from "../../plugins/Utils/Components/ScreenContainer.ts
 import {Cover} from "../../plugins/Utils/Components/Cover.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
+import Panel from "./Panel.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -53,7 +54,7 @@ export default class Chest {
 
         this.waitForOpenClick();
     }
-    private static async Hide(): Promise<void> {
+    public static async Hide(): Promise<void> {
         if (!this._chest) return;
 
         const onComplete = this._chest.onComplete;
@@ -115,10 +116,7 @@ export default class Chest {
             if (!this._chest.isOpened) {
                 this.openChest();
             } else {
-                this.Hide();
-
-                if (this._chest.onComplete)
-                    this._chest.onComplete();
+                Panel.Hide().then(() => Chest.Hide());
             }
         });
     }
@@ -192,6 +190,16 @@ export default class Chest {
                 this._chest.chestSprite.visible = true;
                 this._chest.chestSprite.play();
             }
+
+            Panel.Show(this._chest.game, {
+                text: "CONGRATULATIONS",
+                amountText: "1000 EUR",
+                buttonText: "CLAIM",
+                onClaim: async () => {
+                    await Panel.Hide();
+                    await Chest.Hide();
+                }
+            });
         };
     }
 }

@@ -1,14 +1,3 @@
-/**
- * Компонент колеса фортуны с анимацией вращения
- *
- * Требуемые ассеты в AssetsDB.texture:
- * - wheel - текстура колеса фортуны
- *
- * Использование:
- * import Wheel from "../UI/Wheel.ts";
- * Wheel.Show(game, () => { console.log("Колесо остановилось!"); });
- */
-
 import * as PIXI from "pixi.js";
 import {Assets, Graphics, Sprite, Text} from "pixi.js";
 import {gsap} from "gsap";
@@ -56,9 +45,6 @@ class Wheel {
         this.activateSpinButton();
     }
 
-    /**
-     * Скрывает колесо
-     */
     private static async Hide(): Promise<void> {
         if (!this._wheel) return;
 
@@ -87,17 +73,17 @@ class Wheel {
 
         const wheelTexture = Assets.get(AssetsDB.texture.rool);
 
-        // Создаем спрайт колеса
+        const SECTOR_OFFSET = -Math.PI / 6;
+
         const wheelSprite = screen.addChild(new Sprite({
             texture: wheelTexture,
             anchor: {x: 0.5, y: 0.5}
         }));
+        wheelSprite.rotation = SECTOR_OFFSET;
 
-        // Размер колеса (можно настроить)
         const wheelSize = APP_CONFIG.designSize.x * 0.9;
         wheelSprite.scale.set(wheelSize / Math.max(wheelTexture.width, wheelTexture.height));
 
-        // Создаем кнопку SPIN в центре колеса используя текстуру spine
         const spinButtonTexture = Assets.get(AssetsDB.texture.spine);
 
         let spinButton: Graphics | Sprite;
@@ -163,7 +149,7 @@ class Wheel {
     private static spinWheel(): void {
         if (!this._wheel || this._wheel.isSpinning) return;
 
-        sound.play(AssetsDB.audio.wheel);
+        sound.play(AssetsDB.audio.Wheel);
 
         this._wheel.isSpinning = true;
 
@@ -172,11 +158,9 @@ class Wheel {
         this._wheel.spinButton.alpha = 0.7;
 
         const fullRotations = 5 + Math.random() * 3;
-        const targetAngleDegrees = 20;
-        const targetAngleRadians = (targetAngleDegrees * Math.PI) / 180;
+        const targetAngleRadians = (5 * Math.PI) / 3;
 
         const currentRotation = this._wheel.wheelSprite.rotation;
-
         const finalRotation = currentRotation + (fullRotations * Math.PI * 2) + targetAngleRadians;
 
         const spinDuration = 3 + Math.random();
@@ -186,7 +170,7 @@ class Wheel {
             duration: spinDuration,
             ease: "power2.out",
             onComplete: () => {
-                sound.stop(AssetsDB.audio.wheel);
+                sound.stop(AssetsDB.audio.Wheel);
 
                 this.onSpinComplete();
             }

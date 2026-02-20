@@ -5,7 +5,6 @@ export const AssetsDB = {
     "coin": "coin",
     "jump": "jump",
     "music": "music",
-    "swoosh": "swoosh",
     "wheel": "wheel"
   },
   "font": {

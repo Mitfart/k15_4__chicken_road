@@ -1,9 +1,8 @@
-import {AnimatedSprite, Assets, Container, Sprite} from "pixi.js";
+import {AnimatedSprite, Assets, Container, Sprite, Text} from "pixi.js";
 
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
-import {AnimatedText} from "../../../plugins/Utils/Components/AnimatedText.ts";
 import {APP_CONFIG} from "../../config.ts";
 import {sound} from "@pixi/sound";
 
@@ -13,7 +12,8 @@ export class Chicken extends Container {
     private idleView!: AnimatedSprite;
     private jumpView!: AnimatedSprite;
 
-    private _balanceTxt!: AnimatedText;
+    private _balanceBlock!: Container;
+    private _balanceTxt!: Text;
 
     private _jumpHeight: number;
     private _jumpDuration: number;
@@ -24,8 +24,12 @@ export class Chicken extends Container {
         return this._isJumping;
     }
 
-    public get balanceTxt(): AnimatedText {
+    public get balanceTxt(): Text {
         return this._balanceTxt;
+    }
+
+    public get balanceBlock(): Container {
+        return this._balanceBlock;
     }
 
 
@@ -101,13 +105,14 @@ export class Chicken extends Container {
         this.jumpView.anchor.set(origin.x, origin.y);
         this.jumpView.visible = false;
 
-        const balanceBlock = this.addChild(new Sprite({
+        this._balanceBlock = this.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.chicken_bage),
             anchor: .5,
-            position: { x: -50, y: 100 }
+            position: { x: -50, y: 100 },
+            scale: 0
         }));
 
-        this._balanceTxt = balanceBlock.addChild(new AnimatedText({
+        this._balanceTxt = this._balanceBlock.addChild(new Text({
             style: {
                 fontSize: APP_CONFIG.REM,
                 fill: '#fff',
@@ -119,6 +124,6 @@ export class Chicken extends Container {
             },
             anchor: .5,
             y: 5
-        }, 0, .5, 'x', '', 2));
+        }));
     }
 }

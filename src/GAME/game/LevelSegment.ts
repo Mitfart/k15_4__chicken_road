@@ -8,8 +8,7 @@ import {AssetsDB} from "../../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 
 export class LevelSegment extends Container {
     public readonly value: number;
-
-    private _value_view: string | null;
+    public readonly value_view: string | null;
 
     private hatch!: Hatch;
     private barrier!: Barrier;
@@ -19,7 +18,7 @@ export class LevelSegment extends Container {
         super();
 
         this.value = value;
-        this._value_view = value_view;
+        this.value_view = value_view;
 
         this.createView();
     }
@@ -93,7 +92,7 @@ export class LevelSegment extends Container {
         this._root.x = backgroundWidth / 2;
         this.addChild(this._root);
 
-        this.hatch = new Hatch(this._value_view ?? this.value.toString());
+        this.hatch = new Hatch(this.value_view ?? this.value.toString());
         this._root.addChild(this.hatch);
 
         this.car = new Car(GAME_CONFIG.level.segmentSize * .75);

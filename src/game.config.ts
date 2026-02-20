@@ -1,10 +1,10 @@
 import {GameConfig, LevelConfig} from "./GAME/game/game.types.ts";
 
 export const LEVEL_CONFIG: LevelConfig = {
-    startSize: 150,
+    startSize: 362,
     segmentSize: 200,
     finishOffset: -18,
-    spawnOffset: 100,
+    spawnOffset: -65,
     endOffset: 100,
     barrierPos: 75,
     carPos: 150,
@@ -20,7 +20,7 @@ export const LEVEL_CONFIG: LevelConfig = {
     ],
     values_view: [
         "x1.5",
-        "x3.5",
+        "-",
         "x4.5",
         "x5.5",
         "x11.5",

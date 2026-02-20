@@ -35,7 +35,7 @@ export class Level extends Container {
     }
 
     public get startPosition() {
-        return this._config.startSize / 2;
+        return this._config.startSize + this._config.spawnOffset;
     }
 
     public get finishPosition() {

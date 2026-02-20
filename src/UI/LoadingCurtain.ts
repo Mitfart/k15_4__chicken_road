@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import {Assets, Container, Graphics, Sprite} from "pixi.js";
+import {Assets, Container, Graphics, Sprite, Text} from "pixi.js";
 
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
@@ -8,6 +8,8 @@ import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB";
 import {Game} from "../../plugins/Game/Game.ts";
 import {WidgetRoot} from "../../plugins/Game/UI.ts";
 import {AddBackground, AddCover} from "../../plugins/Game/GameUIUtils.ts";
+import {APP_CONFIG} from "../config.ts";
+import {AnimAlphaLoop} from "./Anims.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -67,9 +69,23 @@ export default class LoadingCurtain {
         await Promise.all([
             AssetsBase64.load(AssetsDB.texture.loading_logo, "texture"),
             AssetsBase64.load(AssetsDB.texture.loading_border, "texture"),
+            AssetsBase64.load(AssetsDB.font.Cera, "font"),
         ]);
 
         const view = game.ui.add(new Container(), WidgetRoot.CENTER);
+
+        const loadingTxt = view.addChild(new Text({
+            text: 'Loading...',
+            style: {
+                fontFamily: APP_CONFIG.fontFamily,
+                fontSize: APP_CONFIG.REM * 1.5,
+                fontWeight: 'bold',
+                fill: '#fff'
+            },
+            anchor: .5,
+            y: 225
+        }));
+        AnimAlphaLoop(loadingTxt);
 
         view.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.loading_logo),
@@ -80,7 +96,7 @@ export default class LoadingCurtain {
         const border = view.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.loading_border),
             anchor: .5,
-            position: { x: 0, y: 300 }
+            y: 300
         }));
         const borderPadding = 17;
         const innerWidth = border.width - borderPadding * 2;

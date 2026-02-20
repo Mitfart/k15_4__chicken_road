@@ -44,7 +44,11 @@ class Wheel {
             this._wheel.screen.show()
         ]);
 
-        const handTutorialSpin = CreateHandTutorial(game, this._wheel.spinButton, { scale: 1.5, offsetY: 75});
+        const handTutorialSpin = CreateHandTutorial(game, this._wheel.spinButton, {
+            scale: 1.5,
+            offsetY: 75,
+            offsetYPortrait: 100,
+        });
         handTutorialSpin.show();
 
         this.activateSpinButton(handTutorialSpin);

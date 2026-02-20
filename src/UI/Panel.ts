@@ -14,6 +14,7 @@ import {ScreenContainer} from "../../plugins/Utils/Components/ScreenContainer.ts
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import {APP_CONFIG} from "../config.ts";
+import {CreateHandTutorial} from "./HandTutorial.ts";
 
 export type PanelOptions = {
     text: string;
@@ -26,6 +27,7 @@ export type PanelScreen = {
     screen: ScreenContainer;
     onClaim: () => void;
     game: Game;
+    handTutorial: ReturnType<typeof CreateHandTutorial>;
 }
 
 export default class Panel {
@@ -39,11 +41,13 @@ export default class Panel {
         this._panel = await this.Construct(game, options);
 
         await this._panel.screen.show();
+        this._panel.handTutorial.show();
     }
 
     public static async Hide(): Promise<void> {
         if (!this._panel) return;
 
+        this._panel.handTutorial.destroy();
         await this._panel.screen.hide();
 
         this._panel.game.ui.remove(this._panel.screen);
@@ -138,10 +142,17 @@ export default class Panel {
             onClaim();
         });
 
+        const handTutorial = CreateHandTutorial(game, button, {
+            scale: 1.5,
+            offsetY: 75,
+            offsetYPortrait: 100,
+        });
+
         return {
             screen,
             onClaim,
             game,
+            handTutorial,
         };
     }
 }

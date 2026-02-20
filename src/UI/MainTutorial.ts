@@ -26,6 +26,8 @@ export type MainTutorialScreen = {
     container: Container;
     show: () => Promise<void>;
     hide: () => Promise<void>;
+    setOnShow: (cb: (() => void) | undefined) => void;
+    setOnHide: (cb: (() => void) | undefined) => void;
 };
 
 export default class MainTutorial {
@@ -35,7 +37,7 @@ export default class MainTutorial {
         game: Game,
         header: HeaderScreen,
         controls: ControlsScreen,
-        options?: { onHide?: () => void }
+        options?: { onShow?: () => void; onHide?: () => void }
     ): Promise<MainTutorialScreen> {
         if (this._tutorial) return this._tutorial;
 
@@ -226,6 +228,8 @@ export default class MainTutorial {
         updateLayout();
 
         let isVisible = false;
+        let onShowCb: (() => void) | undefined = options?.onShow;
+        let onHideCb: (() => void) | undefined = options?.onHide;
 
         const show = async () => {
             if (isVisible) return;
@@ -242,6 +246,7 @@ export default class MainTutorial {
             updateLayout();
             await Play(AnimAlpha(container, { from: 0, to: 1 }, 0.3))();
             updateLayout();
+            onShowCb?.();
         };
 
         const hide = async () => {
@@ -256,7 +261,14 @@ export default class MainTutorial {
             closeBtn.visible = false;
             reopenBtn.visible = true;
             container.alpha = 1;
-            options?.onHide?.();
+            onHideCb?.();
+        };
+
+        const setOnShow = (cb: (() => void) | undefined) => {
+            onShowCb = cb;
+        };
+        const setOnHide = (cb: (() => void) | undefined) => {
+            onHideCb = cb;
         };
 
         OnClick(closeBtn, hide);
@@ -268,10 +280,21 @@ export default class MainTutorial {
             container,
             show,
             hide,
+            setOnShow,
+            setOnHide,
         });
     }
 
-    public static Show(game: Game, header: HeaderScreen, controls: ControlsScreen): Promise<void> {
-        return this.Construct(game, header, controls).then((t) => t.show());
+    public static get(): MainTutorialScreen | null {
+        return this._tutorial;
+    }
+
+    public static Show(
+        game: Game,
+        header: HeaderScreen,
+        controls: ControlsScreen,
+        options?: { onShow?: () => void; onHide?: () => void }
+    ): Promise<void> {
+        return this.Construct(game, header, controls, options).then((t) => t.show());
     }
 }

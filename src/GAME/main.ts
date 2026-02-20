@@ -115,6 +115,7 @@ export async function Main(game: Game) {
 
     const handTutorialGo = CreateHandTutorial(_game, controls.playBtn, {
         offsetY: -50,
+        offsetYPortrait: -120,
         rotation: Math.PI,
     });
 

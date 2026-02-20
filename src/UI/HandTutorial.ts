@@ -24,11 +24,12 @@ export type HandTutorialInstance = {
 export function CreateHandTutorial(
     game: Game,
     targetButton: Container,
-    options?: { scale?: number; tapInterval?: number; offsetY?: number; rotation?: number }
+    options?: { scale?: number; tapInterval?: number; offsetY?: number; offsetYPortrait?: number; rotation?: number }
 ): HandTutorialInstance {
     const scale = options?.scale ?? HAND_SCALE;
     const tapInterval = options?.tapInterval ?? TAP_INTERVAL;
     const offsetY = options?.offsetY ?? 0;
+    const offsetYPortrait = options?.offsetYPortrait;
     const rotation = options?.rotation ?? 0;
 
     const container = game.ui.add(new Container(), WidgetRoot.CENTER);
@@ -80,15 +81,20 @@ export function CreateHandTutorial(
     const updatePosition = () => {
         if (!targetButton.parent || !container.parent) return;
 
+        const isPortrait = game.resizer.realHeight > game.resizer.realWidth;
+        const currentOffsetY = (isPortrait && offsetYPortrait !== undefined) ? offsetYPortrait : offsetY;
+
         const bounds = targetButton.getBounds(true);
         const centerX = (bounds.minX + bounds.maxX) / 2;
-        const centerY = (bounds.minY + bounds.maxY) / 2 + offsetY;
+        const centerY = (bounds.minY + bounds.maxY) / 2 + currentOffsetY;
         const localPos = container.parent.toLocal({ x: centerX, y: centerY });
         container.position.set(localPos.x, localPos.y);
     };
 
     const resizeAction = () => {
-        if (isVisible) updatePosition();
+        requestAnimationFrame(() => {
+            if (targetButton.parent && container.parent) updatePosition();
+        });
     };
     game.resizer.addResizeAction(resizeAction);
 

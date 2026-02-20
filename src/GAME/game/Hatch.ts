@@ -25,7 +25,7 @@ export class Hatch extends Sprite {
             text: txt,
             style: {
                 fontFamily: fontFamily,
-                fontSize: 40,
+                fontSize: APP_CONFIG.REM * 1.25,
                 fontWeight: "bold",
                 align: 'center',
                 fill: "#fff",
@@ -36,7 +36,7 @@ export class Hatch extends Sprite {
             },
             anchor: .5,
         }));
-        this._txt.scale.set((this.texture.width - 20) / this._txt.width);
+        this._txt.scale.set(Math.min(1, (this.texture.width - 20) / this._txt.width));
 
         this.deactivate();
     }

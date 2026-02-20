@@ -30,6 +30,7 @@ export class Car extends Container {
         this.visible = true;
         this._isRacing = true;
 
+        sound.stop(AssetsDB.audio.car);
         sound.play(AssetsDB.audio.car);
 
         setTimeout(() => {

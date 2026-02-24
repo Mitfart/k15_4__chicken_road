@@ -69,7 +69,6 @@ export default class LoadingCurtain {
         game.resize();
 
         await Promise.all([
-            AssetsBase64.load(AssetsDB.font.Cera, "font"),
             AssetsBase64.load(AssetsDB.texture.loading_logo, "texture"),
             AssetsBase64.load(AssetsDB.texture.loading_border, "texture"),
         ]);

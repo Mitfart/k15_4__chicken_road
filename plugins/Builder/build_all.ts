@@ -32,6 +32,9 @@ async function build(data: { network: string, language: string }) {
     const bOptions = mergeOptions(options, build_config);
     const buildOptions = mergeOptions(bOptions, {
         outDir: `${bOptions.outDir}/${data.network.toUpperCase()}`,
+
+        // @ts-expect-error API
+        network: data.network,
         defines: {
             GOOGLE_PLAY_URL: JSON.stringify('__GOOGLE__'),
             APP_STORE_URL: JSON.stringify('__APP_STORE__'),
@@ -39,7 +42,6 @@ async function build(data: { network: string, language: string }) {
             LANGUAGE: JSON.stringify(data.language)
         },
 
-        // @ts-expect-error
         adNetworkNames: {
             preview: 'preview',
             applovin: 'applovin',
@@ -72,9 +74,17 @@ async function build(data: { network: string, language: string }) {
     // =====================================================================================
 
     const fileName = fillTemplate(buildOptions.filename, buildOptions);
-    const filePath = join(buildOptions.outDir, `${fileName}.html`);
+    let filePath: string;
+    let file: string;
+    try {
+        filePath = join(buildOptions.outDir, `${fileName}.html`);
+        file = readFileSync(filePath, 'utf-8');
+    } catch (e: any) {
+        filePath = join(buildOptions.outDir, data.network, `index.html`);
+        file = readFileSync(filePath, 'utf-8');
+    }
 
-    writeFileSync(filePath, readFileSync(filePath, 'utf-8')
+    writeFileSync(filePath, file
         .replace('"__GOOGLE__"', 'window.GOOGLE_PLAY_URL')
         .replace('"__APP_STORE__"', 'window.APP_STORE_URL')
         .replace(

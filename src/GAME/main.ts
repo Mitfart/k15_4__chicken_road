@@ -265,13 +265,22 @@ async function finish() {
         const install = () => {
             sound.play(AssetsDB.audio.click);
 
+            sdk.finish();
             sdk.install();
+
+            // @ts-expect-error API
+            if (window.FbPlayableAd && window.FbPlayableAd.onCTAClick) {
+                // @ts-expect-error API
+                window.FbPlayableAd.onCTAClick();
+            }
         };
 
         OnClick(packshot_ver.btn, install);
         OnClick(packshot_hor.btn, install);
 
         await Bank.Hide();
+
+        sdk.finish();
     };
     OnClick(controls.cashBtn, cashClick);
 }

@@ -8,11 +8,11 @@
     "dev": "playable-scripts dev",
     "assets_process": "npm run assets_compress && npm run assets_generate",
     "ap": "npm run assets_process",
-    "assets_compress": "node plugins/Assets/assets_compress.ts 70 96",
+    "assets_compress": "node plugins/Assets/assets_compress.ts 45 64",
     "ac": "npm run assets_compress",
     "assets_generate": "node plugins/Assets/assets_generate.ts",
     "ag": "npm run assets_generate",
-    "build": "node plugins/Builder/build_all.ts",
+    "build": "npm run assets_process && node plugins/Builder/build_all.ts",
     "b": "npm run build"
   },
   "dependencies": {
@@ -25,7 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@smoud/playable-scripts": "^1.1.2",
-    "eslint": "^9.21.0",
+    "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
     "ffmpeg-static": "^5.3.0",

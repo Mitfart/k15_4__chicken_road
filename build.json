@@ -3,7 +3,7 @@
   "network": "ironsource", // <-- TEST PLATFOMR / DEFAULT BUILD PLATFORM
   "language": "EN", // <-- TEST LANGUAGE / DEFAULT BUILD LANGUAGE
   "filename": "{app}_{network}_{language}", // <-- BUILD FILES NAME FORMAT
-  "zip": true, // <-- SET "TRUE" IF REQUIRED TO BUILD IN ZIP
+  "zip": false, // <-- SET "TRUE" IF REQUIRED TO BUILD IN ZIP
 
   "NETWORKS": [ // LEAVE EMPTY FOR BASIC BUILD
 //    "preview",

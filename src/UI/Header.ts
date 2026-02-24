@@ -29,11 +29,11 @@ export default class Header {
             return this._header;
 
         await Promise.all([
-            AssetsBase64.load(AssetsDB.font.Cera, 'font'),
+            AssetsBase64.load(AssetsDB.font.Roboto, 'font'),
             AssetsBase64.load(AssetsDB.texture.logo, 'texture'),
         ]);
 
-        const width = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
+        let width = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
         const height = 100;
         const stroke = height / 8;
 
@@ -81,8 +81,12 @@ export default class Header {
             anchor: .5
         }, 0, .5, '', ' EUR', 1));
 
-        logo.x = -width / 2;
-        balanceBlock.x = width / 2 - balanceBlock.width / 2;
+        game.resizer.addResizeAction((w) => {
+            width = w - APP_CONFIG.padding.x * 2;
+
+            logo.x = -width / 2;
+            balanceBlock.x = width / 2 - balanceBlock.width / 2;
+        });
 
         return this._header = {
             container,

@@ -62,6 +62,7 @@ export const AssetsDB = {
     "arrow": "arrow",
     "rool": "rool",
     "spine": "spine",
-    "vfx_coins_tex": "vfx_coins_tex"
+    "vfx_coins_tex": "vfx_coins_tex",
+    "vfx_confetti_tex": "vfx_confetti_tex"
   }
 };

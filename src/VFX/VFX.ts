@@ -5,10 +5,10 @@ import {CreateVFX} from "../../plugins/Utils/CreateVFX.ts";
 
 export default class VFX {
     public static confetti(): AnimatedSprite {
-        return CreateVFX(AssetsDB.data.vfx_confetti, false, .25);
+        return CreateVFX(AssetsDB.data.vfx_confetti, true, .25);
     }
 
     public static coins(): AnimatedSprite {
-        return CreateVFX(AssetsDB.data.vfx_coins, true, .25);
+        return CreateVFX(AssetsDB.data.vfx_coins, false, .25);
     }
 }

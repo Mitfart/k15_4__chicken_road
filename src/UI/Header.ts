@@ -29,7 +29,6 @@ export default class Header {
             return this._header;
 
         await Promise.all([
-            AssetsBase64.load(AssetsDB.font.Cera, 'font'),
             AssetsBase64.load(AssetsDB.texture.logo, 'texture'),
         ]);
 

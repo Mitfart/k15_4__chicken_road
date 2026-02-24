@@ -9,6 +9,7 @@ import {CreateHandTutorial} from "../UI/HandTutorial.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, AnimScale, Play} from "../../plugins/Utils/Animations.ts";
 import Chest from "../UI/Chest.ts";
+import Panel from "../UI/Panel.ts";
 import Wheel from "../UI/Wheel.ts";
 import {sound} from "@pixi/sound";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
@@ -128,6 +129,9 @@ export async function Main(game: Game) {
             blockInput = false;
             handTutorialGo.show();
         },
+        otherTutorials: [
+            { isVisible: () => handTutorialGo.isVisible(), hide: () => handTutorialGo.hide(), show: () => handTutorialGo.show() },
+        ],
     });
     await mainTutorial.show();
 
@@ -189,9 +193,19 @@ async function setScore(value: number) {
 
 async function finish() {
     sound.play(AssetsDB.audio.win);
-
     await delay(.5);
 
+    await Panel.Show(_game, {
+        text: "CONGRATULATIONS",
+        amountText: "7 000 EUR",
+        showButton: false,
+        useCover: true,
+        autoCloseAfter: 2,
+        onClaim: () => { finishContent(); },
+    });
+}
+
+async function finishContent() {
     const confetti = _game.container.addChild(VFX.confetti());
     confetti.scale = 1.5;
     confetti.position.set(
@@ -204,7 +218,6 @@ async function finish() {
     await Bank.Show(_game, 2);
 
     await delay(.5);
-
 
     const packshot_ver = await Packshot_Vertical.Construct(_game);
     packshot_ver.screen.show();

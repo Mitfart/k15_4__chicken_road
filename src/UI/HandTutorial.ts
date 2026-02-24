@@ -24,17 +24,28 @@ export type HandTutorialInstance = {
 export function CreateHandTutorial(
     game: Game,
     targetButton: Container,
-    options?: { scale?: number; tapInterval?: number; offsetY?: number; offsetYPortrait?: number; rotation?: number }
+    options?: { scale?: number; scalePortrait?: number; tapInterval?: number; offsetX?: number; offsetY?: number; offsetYPortrait?: number; rotation?: number; parentContainer?: Container; zIndex?: number }
 ): HandTutorialInstance {
     const scale = options?.scale ?? HAND_SCALE;
+    const scalePortrait = options?.scalePortrait;
     const tapInterval = options?.tapInterval ?? TAP_INTERVAL;
+    const offsetX = options?.offsetX ?? 0;
     const offsetY = options?.offsetY ?? 0;
     const offsetYPortrait = options?.offsetYPortrait;
     const rotation = options?.rotation ?? 0;
+    const parentContainer = options?.parentContainer;
+    const zIndex = options?.zIndex ?? 999;
 
-    const container = game.ui.add(new Container(), WidgetRoot.CENTER);
+    const getCurrentScale = () => {
+        const isPortrait = game.resizer.realHeight > game.resizer.realWidth;
+        return (isPortrait && scalePortrait != null) ? scalePortrait : scale;
+    };
+
+    const container = parentContainer
+        ? parentContainer.addChild(new Container())
+        : game.ui.add(new Container(), WidgetRoot.CENTER);
     container.sortableChildren = true;
-    container.zIndex = 999;
+    container.zIndex = zIndex;
     container.eventMode = "none";
     container.interactiveChildren = false;
 
@@ -54,17 +65,18 @@ export function CreateHandTutorial(
 
     const runTapAnimation = () => {
         if (!isVisible || !container.visible) return;
+        const currentScale = getCurrentScale();
 
         tapTween = gsap.timeline({ repeat: -1, repeatDelay: tapInterval - TAP_DURATION })
             .to(hand.scale, {
-                x: scale * TAP_SCALE_PRESSED,
-                y: scale * TAP_SCALE_PRESSED,
+                x: currentScale * TAP_SCALE_PRESSED,
+                y: currentScale * TAP_SCALE_PRESSED,
                 duration: TAP_DURATION / 2,
                 ease: "power2.in",
             })
             .to(hand.scale, {
-                x: scale,
-                y: scale,
+                x: currentScale,
+                y: currentScale,
                 duration: TAP_DURATION / 2,
                 ease: "back.out",
             });
@@ -75,7 +87,7 @@ export function CreateHandTutorial(
             tapTween.kill();
             tapTween = null;
         }
-        hand.scale.set(scale);
+        hand.scale.set(getCurrentScale());
     };
 
     const updatePosition = () => {
@@ -83,12 +95,19 @@ export function CreateHandTutorial(
 
         const isPortrait = game.resizer.realHeight > game.resizer.realWidth;
         const currentOffsetY = (isPortrait && offsetYPortrait !== undefined) ? offsetYPortrait : offsetY;
+        hand.scale.set(getCurrentScale());
 
-        const bounds = targetButton.getBounds(true);
-        const centerX = (bounds.minX + bounds.maxX) / 2;
+        const bounds = targetButton.getBounds(false);
+        const centerX = (bounds.minX + bounds.maxX) / 2 + offsetX;
         const centerY = (bounds.minY + bounds.maxY) / 2 + currentOffsetY;
-        const localPos = container.parent.toLocal({ x: centerX, y: centerY });
+        const world = { x: centerX, y: centerY };
+        const localPos = container.parent.toLocal(world);
         container.position.set(localPos.x, localPos.y);
+
+        if (isVisible && container.visible && tapTween) {
+            stopTapAnimation();
+            runTapAnimation();
+        }
     };
 
     const resizeAction = () => {
@@ -118,7 +137,12 @@ export function CreateHandTutorial(
         stopTapAnimation();
         hide();
         game.resizer.removeResizeAction(resizeAction);
-        game.ui.remove(container);
+        if (parentContainer) {
+            parentContainer.removeChild(container);
+            container.destroy();
+        } else {
+            game.ui.remove(container);
+        }
     };
 
     container.visible = false;

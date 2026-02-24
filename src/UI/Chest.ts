@@ -130,6 +130,7 @@ export default class Chest {
                 text: "CONGRATULATIONS",
                 amountText: "1000 EUR",
                 buttonText: "CLAIM",
+                useCover: true,
                 onClaim: async () => {
                     await Promise.all([
                         Panel.Hide(),

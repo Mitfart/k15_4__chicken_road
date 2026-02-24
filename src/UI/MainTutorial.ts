@@ -11,6 +11,7 @@ import {APP_CONFIG} from "../config.ts";
 import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimAlpha, Play} from "../../plugins/Utils/Animations.ts";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
+import {CreateHandTutorial} from "./HandTutorial.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -21,6 +22,13 @@ const OUTLINE_WIDTH = 4;
 const OUTLINE_COLOR = 0xffffff;
 const CURSOR_SCALE = 1.5;
 const STEP_TEXT_SIZE = 36;
+
+/** Туториал, который нужно отключать при показе MainTutorial и возобновлять при скрытии */
+export type PausableTutorial = {
+    isVisible: () => boolean;
+    hide: () => void;
+    show: () => void;
+};
 
 export type MainTutorialScreen = {
     container: Container;
@@ -37,7 +45,7 @@ export default class MainTutorial {
         game: Game,
         header: HeaderScreen,
         controls: ControlsScreen,
-        options?: { onShow?: () => void; onHide?: () => void }
+        options?: { onShow?: () => void; onHide?: () => void; otherTutorials?: PausableTutorial[] }
     ): Promise<MainTutorialScreen> {
         if (this._tutorial) return this._tutorial;
 
@@ -59,7 +67,7 @@ export default class MainTutorial {
         closeBtn.eventMode = "static";
         closeBtn.cursor = "pointer";
 
-        const closeSize = 56;
+        const closeSize = 84;
         closeBtn
             .roundRect(-closeSize / 2, -closeSize / 2, closeSize, closeSize, closeSize / 4)
             .fill({ color: 0x333333, alpha: 0.9 });
@@ -76,6 +84,17 @@ export default class MainTutorial {
                 anchor: 0.5,
             })
         );
+
+        const handTutorialClose = CreateHandTutorial(game, closeBtn, {
+            parentContainer: container,
+            zIndex: 20,
+            rotation: (25 * Math.PI) / 180,
+            offsetX: -20,
+            offsetY: 35,
+            scale: 0.85,
+            scalePortrait: 0.6,
+        });
+        let closeHandTimer: ReturnType<typeof setTimeout> | null = null;
 
         const cursorTex = Assets.get(AssetsDB.texture.cursor2);
         type TutorialHint = { el: Container; text: string; rotation: number; textSide: "left" | "top"; offsetX?: number; offsetY?: number };
@@ -228,10 +247,22 @@ export default class MainTutorial {
         let isVisible = false;
         let onShowCb: (() => void) | undefined = options?.onShow;
         let onHideCb: (() => void) | undefined = options?.onHide;
+        const otherTutorials = options?.otherTutorials ?? [];
+        let tutorialsToRestore: PausableTutorial[] = [];
 
         const show = async () => {
             if (isVisible) return;
             isVisible = true;
+            tutorialsToRestore = [];
+            for (const t of otherTutorials) {
+                if (t.isVisible()) {
+                    tutorialsToRestore.push(t);
+                    t.hide();
+                }
+            }
+            if (closeHandTimer) clearTimeout(closeHandTimer);
+            closeHandTimer = null;
+            handTutorialClose.hide();
             container.visible = true;
             overlay.visible = true;
             overlayMask.visible = true;
@@ -245,11 +276,17 @@ export default class MainTutorial {
             await Play(AnimAlpha(container, { from: 0, to: 1 }, 0.3))();
             updateLayout();
             onShowCb?.();
+            closeHandTimer = setTimeout(() => handTutorialClose.show(), 3000);
         };
 
         const hide = async () => {
             if (!isVisible) return;
             isVisible = false;
+            if (closeHandTimer) {
+                clearTimeout(closeHandTimer);
+                closeHandTimer = null;
+            }
+            handTutorialClose.hide();
             await Play(AnimAlpha(container, { from: 1, to: 0 }, 0.25))();
             overlay.visible = false;
             overlayMask.visible = false;
@@ -259,6 +296,10 @@ export default class MainTutorial {
             closeBtn.visible = false;
             reopenBtn.visible = true;
             container.alpha = 1;
+            for (const t of tutorialsToRestore) {
+                t.show();
+            }
+            tutorialsToRestore = [];
             onHideCb?.();
         };
 
@@ -291,7 +332,7 @@ export default class MainTutorial {
         game: Game,
         header: HeaderScreen,
         controls: ControlsScreen,
-        options?: { onShow?: () => void; onHide?: () => void }
+        options?: { onShow?: () => void; onHide?: () => void; otherTutorials?: PausableTutorial[] }
     ): Promise<void> {
         return this.Construct(game, header, controls, options).then((t) => t.show());
     }

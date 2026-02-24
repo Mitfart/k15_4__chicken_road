@@ -37,27 +37,13 @@ export default class Header {
         const height = 100;
         const stroke = height / 8;
 
-        const container = game.ui.add(
-            new Container(),
-            WidgetRoot.TOP,
-            { x: 0, y: -stroke });
+        const container = new Container();
 
         const background = container.addChild(new Graphics());
-        game.resizer.addResizeAction((w) => {
-            background
-                .clear()
-                .rect(-w / 2, -height / 2, w, height)
-                .stroke({
-                    width: stroke,
-                    color: '#333333',
-                    alignment: 0
-                })
-                .fill('#434343');
-        });
 
         const logo = container.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.logo),
-            anchor: {x: 0, y: 0.5},
+            anchor: .5,
             scale: 1.25
         }));
 
@@ -65,7 +51,6 @@ export default class Header {
             x: height * 3.5,
             y: height * .75
         }
-
         const balanceBlock = container.addChild(new Graphics()
             .roundRect(-balanceBlockSize.x / 2, -balanceBlockSize.y / 2, balanceBlockSize.x, balanceBlockSize.y, balanceBlockSize.y / 4)
             .fill('#585858')
@@ -81,10 +66,19 @@ export default class Header {
             anchor: .5
         }, 0, .5, '', ' EUR', 1));
 
-        game.resizer.addResizeAction((w) => {
+        game.ui.add(container, WidgetRoot.TOP, {x: 0, y: -stroke}, (_, w) => {
+            background.clear()
+                .rect(-w / 2, -height / 2, w, height)
+                .stroke({
+                    width: stroke,
+                    color: '#333333',
+                    alignment: 0
+                })
+                .fill('#434343');
+
             width = w - APP_CONFIG.padding.x * 2;
 
-            logo.x = -width / 2;
+            logo.x = -width / 2 + logo.width / 2;
             balanceBlock.x = width / 2 - balanceBlock.width / 2;
         });
 

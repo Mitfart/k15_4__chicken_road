@@ -38,7 +38,6 @@ export default class Header {
         const stroke = height / 8;
 
         const container = new Container();
-
         const background = container.addChild(new Graphics());
 
         const logo = container.addChild(new Sprite({
@@ -65,6 +64,7 @@ export default class Header {
             },
             anchor: .5
         }, 0, .5, '', ' EUR', 1));
+
 
         game.ui.add(container, WidgetRoot.TOP, {x: 0, y: -stroke}, (_, w) => {
             background.clear()

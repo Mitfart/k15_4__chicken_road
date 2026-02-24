@@ -192,20 +192,6 @@ async function setScore(value: number) {
 
 
 async function finish() {
-    sound.play(AssetsDB.audio.win);
-    await delay(.5);
-
-    await Panel.Show(_game, {
-        text: "CONGRATULATIONS",
-        amountText: "7 000 EUR",
-        showButton: false,
-        useCover: true,
-        autoCloseAfter: 2,
-        onClaim: () => { finishContent(); },
-    });
-}
-
-async function finishContent() {
     const confetti = _game.container.addChild(VFX.confetti());
     confetti.scale = 1.5;
     confetti.position.set(
@@ -215,24 +201,36 @@ async function finishContent() {
 
     chicken.playWin();
 
-    await Bank.Show(_game, 2);
-
+    sound.play(AssetsDB.audio.win);
     await delay(.5);
 
-    const packshot_ver = await Packshot_Vertical.Construct(_game);
-    packshot_ver.screen.show();
+    await Panel.Show(_game, {
+        text: "CONGRATULATIONS",
+        amountText: "7 000 EUR",
+        showButton: false,
+        useCover: true,
+        autoCloseAfter: 2,
+        onClaim: async () => {
+            await Bank.Show(_game, 2);
 
-    const packshot_hor = await Packshot_Horizontal.Construct(_game);
-    packshot_hor.screen.show();
+            await delay(.5);
 
-    const install = () => {
-        sound.play(AssetsDB.audio.click);
+            const packshot_ver = await Packshot_Vertical.Construct(_game);
+            packshot_ver.screen.show();
 
-        sdk.install();
-    };
+            const packshot_hor = await Packshot_Horizontal.Construct(_game);
+            packshot_hor.screen.show();
 
-    OnClick(packshot_ver.btn, install);
-    OnClick(packshot_hor.btn, install);
+            const install = () => {
+                sound.play(AssetsDB.audio.click);
 
-    await Bank.Hide();
+                sdk.install();
+            };
+
+            OnClick(packshot_ver.btn, install);
+            OnClick(packshot_hor.btn, install);
+
+            await Bank.Hide();
+        },
+    });
 }

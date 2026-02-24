@@ -23,6 +23,7 @@ window.onload = async () => {
 
     await LoadingCurtain.Show(game);
     LoadingCurtain.Hide(game);
+    game.resize();
 
     await Main(game);
 

@@ -15,6 +15,7 @@ export class Resizer {
     private _realHeight: number = -1;
 
     private _started: boolean = false;
+    private _boundResizeHandler: () => void = () => this.resize();
 
 
     public get designAspectRatio(): number {
@@ -42,18 +43,19 @@ export class Resizer {
     public startProcess() {
         this.resize();
 
-        if (!this._started)
-            window.addEventListener("resize", debounceFunc(() => {
-                this.resize();
-            }));
+        if (!this._started) {
+            const handler = debounceFunc(this._boundResizeHandler);
+            window.addEventListener("resize", handler);
+            this._boundResizeHandler = handler;
+        }
         this._started = true;
     }
 
     public stopProcess() {
-        if (this._started)
-            window.removeEventListener("resize", debounceFunc(() => {
-                this.resize();
-            }));
+        if (this._started && typeof this._boundResizeHandler === "function") {
+            window.removeEventListener("resize", this._boundResizeHandler);
+            this._boundResizeHandler = () => this.resize();
+        }
         this._started = false;
     }
 
@@ -69,7 +71,8 @@ export class Resizer {
         const actionID: number = isNumber(arg)
             ? arg as number
             : this._resizeActions.indexOf(arg as (w: number, h: number) => void);
-        this._resizeActions.splice(actionID, 1);
+        if (actionID >= 0)
+            this._resizeActions.splice(actionID, 1);
     }
 
 

@@ -115,7 +115,7 @@ export class Chicken extends Container {
         this._balanceBlock = this.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.chicken_bage),
             anchor: .5,
-            position: { x: -50, y: 100 },
+            position: { x: -100, y: 100 },
             scale: 0
         }));
 

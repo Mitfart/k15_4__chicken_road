@@ -72,7 +72,7 @@ export default class Contols {
         );
         const cashTextStyle: TextStyleOptions = {
             fontFamily: APP_CONFIG.fontFamily,
-            fontSize: APP_CONFIG.REM * 1.5,
+            fontSize: APP_CONFIG.REM * 1.25,
             fontWeight: 'bold',
             fill: '#000'
         };

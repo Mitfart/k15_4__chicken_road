@@ -57,8 +57,8 @@ export class UI {
         ins: T,
         pos: WidgetRoot = WidgetRoot.CENTER,
         offset: { x: number, y: number } = {x: 0, y: 0},
-        resizeFunc: (ins: T, realWidth: number, realHeight: number) => void = () => {
-        }
+        resizeFunc: (ins: T, realWidth: number, realHeight: number) => void = () => {},
+        runBefore: boolean = false
     ) {
         let posFactor: {x: number, y: number} = { x: .5, y: .5 };
         switch (pos) {
@@ -95,6 +95,9 @@ export class UI {
         }
 
         this._resizeForChildren[ins.uid] = (w, h) => {
+            if (runBefore)
+                resizeFunc(ins, w, h);
+
             w /= this.container.scale.x;
             h /= this.container.scale.y;
 
@@ -106,7 +109,8 @@ export class UI {
             ins.x += offset.x;
             ins.y += offset.y;
 
-            resizeFunc(ins, w, h);
+            if (!runBefore)
+                resizeFunc(ins, w, h);
         };
         this._game.resizer.addResizeAction(this._resizeForChildren[ins.uid]);
 

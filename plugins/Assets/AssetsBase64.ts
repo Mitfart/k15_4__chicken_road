@@ -55,7 +55,7 @@ export class AssetsBase64 {
 
 
     public static async loadFont(key: string, value: string) {
-        if (Assets.cache.has(key)) return;
+        if (Assets.cache.has(key) || !value) return;
 
         const font = await (new FontFace(key, `url(${value})`).load());
         document.fonts.add(font);

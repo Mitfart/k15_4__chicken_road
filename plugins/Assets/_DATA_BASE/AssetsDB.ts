@@ -10,7 +10,7 @@ export const AssetsDB = {
     "win": "win"
   },
   "font": {
-    "Cera": "Cera"
+    "Roboto": "Roboto"
   },
   "data": {
     "cars": "cars",

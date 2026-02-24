@@ -2,7 +2,7 @@ import {GameConfig, LevelConfig} from "./GAME/game/game.types.ts";
 
 export const LEVEL_CONFIG: LevelConfig = {
     startSize: 362,
-    segmentSize: 200,
+    segmentSize: 230,
     finishOffset: -18,
     spawnOffset: -65,
     endOffset: 100,

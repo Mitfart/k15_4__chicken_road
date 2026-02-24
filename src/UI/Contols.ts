@@ -30,27 +30,27 @@ export default class Contols {
             return this._controls;
 
 
-        const width = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
+        let contentWidth = APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2;
         const btnHeight = 200;
-        const btnWidth = (width - APP_CONFIG.padding.x) / 2;
+        const btnWidth = (contentWidth - APP_CONFIG.padding.x) / 2;
 
         const controlsTopTex = Assets.get(AssetsDB.texture.controls_top);
         const topPanel = new Sprite({
             texture: controlsTopTex,
             anchor: { x: .5, y: 1 },
-            scale: width / controlsTopTex.width
+            scale: contentWidth / controlsTopTex.width
         });
 
-        const totalHeight = btnHeight + topPanel.height + APP_CONFIG.padding.y * 3;
-
-        const screen = game.ui.add(new Container(), WidgetRoot.BOTTOM);
-
-        const background = screen.addChild(new Graphics());
-
-        screen.addChild(topPanel);
+        let totalHeight = btnHeight + topPanel.height + APP_CONFIG.padding.y * 3;
 
 
-        const playBtn = screen.addChild(new Graphics({ position: { x: width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y } })
+        const container = new Container();
+        const background = container.addChild(new Graphics());
+
+        container.addChild(topPanel);
+
+
+        const playBtn = container.addChild(new Graphics({ position: { x: contentWidth / 4, y: btnHeight / 2 + APP_CONFIG.padding.y } })
             .roundRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight)
             .fill('#3c8f57')
         );
@@ -66,7 +66,7 @@ export default class Contols {
         }));
 
 
-        const cashBtn = screen.addChild(new Graphics({ position: { x: -width / 4, y: btnHeight / 2 + APP_CONFIG.padding.y }})
+        const cashBtn = container.addChild(new Graphics({ position: { x: -contentWidth / 4, y: btnHeight / 2 + APP_CONFIG.padding.y }})
             .roundRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight)
             .fill('#ffc600')
         );
@@ -89,15 +89,53 @@ export default class Contols {
         }, 0, .5, '', ' EUR', 2));
 
 
-        game.resizer.addResizeAction((w) => {
-            background
-                .clear()
-                .rect(-w / 2, -totalHeight / 2, w, totalHeight)
-                .fill('#434343');
-        });
+        const betsViewTex = Assets.get(AssetsDB.texture.controls_mid);
+        const betsView = container.addChild(new Sprite({
+            texture: betsViewTex,
+            anchor: .5,
+            scale: topPanel.height / betsViewTex.height
+        }));
+
+
+        game.ui.add(container, WidgetRoot.BOTTOM, { x: 0, y: 0 }, (_: Container, w: number, h: number) => {
+            const isPortrait = w <= h;
+
+            contentWidth = isPortrait
+                ? APP_CONFIG.designSize.x - APP_CONFIG.padding.x * 2
+                : w - APP_CONFIG.padding.x * 4;
+            totalHeight = isPortrait
+                ? btnHeight + topPanel.height + APP_CONFIG.padding.y * 3
+                : Math.max(btnHeight, topPanel.height) + APP_CONFIG.padding.y * 2;
+
+            background.clear();
+            if (isPortrait) {
+                background.rect(-w / 2, -totalHeight / 2, w, totalHeight);
+            } else {
+                const width = w - APP_CONFIG.padding.x * 2;
+                background.roundRect(-width / 2, -totalHeight / 2, width, totalHeight, APP_CONFIG.padding.x);
+            }
+            background.fill('#434343');
+
+            if (!isPortrait) {
+                topPanel.position.set((-contentWidth + topPanel.width) / 2, topPanel.height / 2);
+
+                playBtn.position.set((contentWidth - btnWidth) / 2, 0);
+                cashBtn.position.set((contentWidth - btnWidth) / 2 - btnWidth - APP_CONFIG.padding.x, 0);
+
+                betsView.scale = (contentWidth - topPanel.width - btnWidth * 2 - APP_CONFIG.padding.x * 3) / betsViewTex.width
+                betsView.visible = true;
+            } else {
+                topPanel.position.set(0, 0);
+
+                playBtn.position.set( contentWidth / 4, btnHeight / 2 + APP_CONFIG.padding.y);
+                cashBtn.position.set(-contentWidth / 4, btnHeight / 2 + APP_CONFIG.padding.y);
+
+                betsView.visible = false;
+            }
+        }, true);
 
         return this._controls = {
-            container: screen,
+            container: container,
             topPanel,
             playBtn,
             cashBtn,

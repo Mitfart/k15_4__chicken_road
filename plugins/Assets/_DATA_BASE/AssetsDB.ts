@@ -37,6 +37,7 @@ export const AssetsDB = {
     "icon_game": "icon_game",
     "icon_netflix": "icon_netflix",
     "icon_uber": "icon_uber",
+    "controls_mid": "controls_mid",
     "controls_top": "controls_top",
     "cursor2": "cursor2",
     "hand": "hand",

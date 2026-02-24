@@ -38,16 +38,23 @@ const specials: ({ id: number, func: () => void })[] = [
             sound.play(AssetsDB.audio.win);
 
             chicken.balanceTxt.text = 'x3.5';
+            controls.balanceTxt.setValue(score, score + 1000);
             blockInput = false;
         });
     } },
     { id: 6, func: async () => {
         blockInput = true;
+
         await Wheel.Show(_game, () => {
             sound.play(AssetsDB.audio.win);
 
             chicken.balanceTxt.text = 'x300';
+            controls.balanceTxt.setValue(score, score = 7000);
             blockInput = false;
+
+            setTimeout(() => {
+                Wheel.Hide();
+            }, 1000 * 2);
         });
     } }
 ];
@@ -67,6 +74,8 @@ let controls!: ControlsScreen;
 
 let chestLevelView!: Container;
 
+let started: boolean = false;
+
 
 export async function Main(game: Game) {
     // ===========================================================================================
@@ -76,20 +85,23 @@ export async function Main(game: Game) {
     chicken = game.container.addChild(new Chicken(chickenJump.height, chickenJump.duration));
 
     game.resizer.addResizeAction(_game.container.uid, (w, h) => {
+        const isPortrait = w <= h;
+
         game.container.scale.set(Math.max(
             1,
-            w / level.width * .8,
-            h / level.height * 1.125
+            !isPortrait ? h / level.height * 1.4 : h / level.height * .8
         ));
 
-        level.position.set(0, h * .45 / game.container.scale.y);
+        level.position.set(0, h / game.container.scale.y * (!isPortrait ? .45 : .23));
 
         chicken.position.set(level.currentPosition, level.position.y);
+
+        game.ui.setFollowObject(chicken, {x: isPortrait ? .55 : .25, y: .5});
     });
 
     // ===========================================================================================
 
-    game.ui.setFollowObject(chicken, {x: .475, y: .5});
+    game.ui.setFollowObject(chicken, {x: .55, y: .5});
     game.ui.setFollowBounds(level);
 
     // ===========================================================================================
@@ -156,6 +168,11 @@ async function play() {
         || level.currentSegmentID >= level.length - 1)
         return;
 
+    if (!started) {
+        started = true;
+        header.balanceTxt.setValue(GAME_CONFIG.initialBalance, GAME_CONFIG.initialBalance - GAME_CONFIG.betAmount);
+    }
+
     level.currentSegmentID++;
 
     sound.play(AssetsDB.audio.click);
@@ -168,6 +185,8 @@ async function play() {
         level.currentSegment?.activate();
         level.nextSegment?.target();
 
+        setScore(level.currentSegment?.value || score);
+
         const special = specials.find(s => s.id === level.currentSegmentID);
         if (special) {
             special.func();
@@ -176,7 +195,6 @@ async function play() {
             await finish();
             return;
         } else {
-            setScore(level.currentSegment?.value || 0);
             chicken.balanceTxt.text = level.currentSegment?.value_view ?? '';
             blockInput = false;
         }
@@ -185,7 +203,6 @@ async function play() {
 
 
 async function setScore(value: number) {
-    header.balanceTxt.setValue(score, value);
     controls.balanceTxt.setValue(score, value);
 
     score = value;
@@ -207,13 +224,15 @@ async function finish() {
 
     controls.container.zIndex = 1000;
 
+    sound.play(AssetsDB.audio.win_whoosh);
     Panel.Show(_game, {
         text: "CONGRATULATIONS",
         amountText: "7 000 EUR",
         showButton: false,
         useCover: true,
-        autoCloseAfter: 10,
-        onClaim: () => cashClick()
+        autoCloseAfter: 2,
+        withCoins: true,
+        hideCover: false
     });
 
     const cashTutorial = controls.cashBtn.addChild(new Tutorial(AssetsDB.texture.hand));

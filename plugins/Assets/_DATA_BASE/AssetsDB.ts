@@ -7,7 +7,8 @@ export const AssetsDB = {
     "music": "music",
     "push": "push",
     "wheel": "wheel",
-    "win": "win"
+    "win": "win",
+    "win_whoosh": "win_whoosh"
   },
   "font": {
     "Roboto": "Roboto"

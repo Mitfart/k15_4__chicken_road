@@ -2,7 +2,7 @@ import {GameConfig, LevelConfig} from "./GAME/game/game.types.ts";
 
 export const LEVEL_CONFIG: LevelConfig = {
     startSize: 362,
-    segmentSize: 230,
+    segmentSize: 200,
     finishOffset: -18,
     spawnOffset: -65,
     endOffset: 100,
@@ -11,12 +11,12 @@ export const LEVEL_CONFIG: LevelConfig = {
     carDuration: .75,
     hatchDuration: .25,
     values: [
-        2120,
-        3415,
-        5100,
-        7800,
-        7800 + 5000,
-        21000,
+        30,
+        70,
+        1070,
+        1110,
+        1230,
+        1230, // 7000
     ],
     values_view: [
         "x1.5",
@@ -29,7 +29,7 @@ export const LEVEL_CONFIG: LevelConfig = {
 };
 
 export const GAME_CONFIG: GameConfig = {
-    initialBalance: 1500,
-    betAmount: 0,
+    initialBalance: 100,
+    betAmount: 20,
     level: LEVEL_CONFIG
 };

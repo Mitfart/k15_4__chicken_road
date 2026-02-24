@@ -9,6 +9,6 @@ export default class VFX {
     }
 
     public static coins(): AnimatedSprite {
-        return CreateVFX(AssetsDB.data.vfx_coins, false, .25);
+        return CreateVFX(AssetsDB.data.vfx_coins, true, 1);
     }
 }

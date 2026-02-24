@@ -5,6 +5,7 @@ import {Main} from "./GAME/main.ts";
 import {AddAutoIllustrativeText} from "../plugins/Game/GameUIUtils.ts";
 import LoadingCurtain from "./UI/LoadingCurtain.ts";
 import Header from "./UI/Header.ts";
+import {GAME_CONFIG} from "./game.config.ts";
 
 // =====================================================================================
 
@@ -18,7 +19,10 @@ window.onload = async () => {
     await AssetsBase64.loadAll();
 
     await LoadingCurtain.Construct(game);
-    await Header.Construct(game);
+
+    const header = await Header.Construct(game);
+    header.balanceTxt.setValue(GAME_CONFIG.initialBalance, GAME_CONFIG.initialBalance);
+
     game.resize();
 
     await LoadingCurtain.Show(game);

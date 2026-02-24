@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import {Assets, Graphics, Sprite, Text} from "pixi.js";
+import {AnimatedSprite, Assets, Graphics, Sprite, Text} from "pixi.js";
 import {gsap} from "gsap";
 import {PixiPlugin} from "gsap/PixiPlugin";
 import {Game} from "../../plugins/Game/Game.ts";
@@ -11,6 +11,7 @@ import {OffClick, OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {APP_CONFIG} from "../config.ts";
 import {sound} from "@pixi/sound";
 import {CreateHandTutorial} from "./HandTutorial.ts";
+import VFX from "../VFX/VFX.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -26,6 +27,7 @@ export type WheelScreen = {
     isDisabled: boolean;
     onComplete?: () => void;
     game: Game;
+    coinsVFX: AnimatedSprite;
 }
 
 class Wheel {
@@ -54,7 +56,7 @@ class Wheel {
         this.activateSpinButton(handTutorialSpin);
     }
 
-    private static async Hide(): Promise<void> {
+    static async Hide(): Promise<void> {
         if (!this._wheel) return;
 
         if (this._spinAnimation) {
@@ -64,6 +66,14 @@ class Wheel {
 
         this._handTutorialSpin?.destroy();
         this._handTutorialSpin = null;
+
+        gsap.to(this._wheel.coinsVFX.scale, {
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: "back.out",
+            onComplete: () => this._wheel!.coinsVFX.destroy()
+        });
 
         await Promise.all([
             this._wheel.screen.hide(),
@@ -75,10 +85,14 @@ class Wheel {
         this._wheel = null;
     }
 
+
     private static async Construct(game: Game, onComplete?: () => void): Promise<WheelScreen> {
         const cover = game.ui.add(new Cover(game.resizer, 0.6, 0.3), WidgetRoot.CENTER);
 
         const screen = game.ui.add(new ScreenContainer(0.5, 1), WidgetRoot.CENTER);
+
+        const coinsVFX = screen.addChild(VFX.coins());
+        coinsVFX.scale.set(0);
 
         const wheelTexture = Assets.get(AssetsDB.texture.rool);
         const arrowTexture = Assets.get(AssetsDB.texture.arrow);
@@ -163,7 +177,8 @@ class Wheel {
             isSpinning: false,
             isDisabled: false,
             onComplete,
-            game
+            game,
+            coinsVFX
         };
     }
 
@@ -232,6 +247,14 @@ class Wheel {
             this._wheel.spinButtonText.text = "DONE";
         }
 
+
+        gsap.to(this._wheel.coinsVFX.scale, {
+            x: 5,
+            y: 5,
+            duration: 0.5,
+            ease: "back.out"
+        });
+
         // Показываем текст "300х" с анимацией
         this._wheel.winText.visible = true;
         this._wheel.winText.scale.set(0.8);
@@ -244,13 +267,7 @@ class Wheel {
         gsap.to(this._wheel.winText, {
             alpha: 1,
             duration: 0.5,
-            ease: "power2.out",
-            onComplete: () => {
-                // После показа текста, через некоторое время скрываем все
-                setTimeout(() => {
-                    this.Hide();
-                }, 1500);
-            }
+            ease: "power2.out"
         });
     }
 }

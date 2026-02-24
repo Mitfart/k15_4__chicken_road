@@ -136,7 +136,9 @@ export default class Chest {
                         Panel.Hide(),
                         Chest.Hide(),
                     ]);
-                }
+                },
+                withCoins: false,
+                hideCover: true
             });
         };
     }

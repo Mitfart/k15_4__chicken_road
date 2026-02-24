@@ -71,8 +71,6 @@ export default class Header {
 
 
         game.ui.add(container, WidgetRoot.TOP, {x: 0, y: -stroke}, (_, w) => {
-            console.log("Header - Resize");
-
             background.clear()
                 .rect(-w / 2, -height / 2, w, height)
                 .stroke({

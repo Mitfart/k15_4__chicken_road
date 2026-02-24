@@ -12,7 +12,10 @@ export function CreateVFX(key: string, loop: boolean = true, speedMod: number  =
     if (onComplete)
         vfx.onComplete = onComplete;
     else if (!loop)
-        vfx.onComplete = () => vfx.destroy();
+        vfx.onComplete = () => {
+            vfx.stop();
+            vfx.destroy();
+        };
 
     return vfx;
 }

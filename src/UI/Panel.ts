@@ -7,7 +7,7 @@
  * Без кнопки (финиш): Panel.Show(game, { text: "CONGRATULATIONS", amountText: "7 000 EUR", showButton: false, useCover: true, autoCloseAfter: 2, onClaim: () => { ... } });
  */
 
-import {Container, Graphics, Sprite, Text} from "pixi.js";
+import {AnimatedSprite, Container, Graphics, Sprite, Text} from "pixi.js";
 import {Assets} from "pixi.js";
 import {Game} from "../../plugins/Game/Game.ts";
 import {WidgetRoot} from "../../plugins/Game/UI.ts";
@@ -17,6 +17,8 @@ import {OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AssetsDB} from "../../plugins/Assets/_DATA_BASE/AssetsDB.ts";
 import {APP_CONFIG} from "../config.ts";
 import {CreateHandTutorial} from "./HandTutorial.ts";
+import VFX from "../VFX/VFX.ts";
+import {gsap} from "gsap";
 
 export type PanelOptions = {
     text: string;
@@ -27,6 +29,8 @@ export type PanelOptions = {
     /** Секунды через которые вызвать onClaim и скрыть панель (если задано, кнопка не показывается) */
     autoCloseAfter?: number;
     onClaim?: () => void;
+    withCoins: boolean;
+    hideCover: boolean;
 }
 
 export type PanelScreen = {
@@ -36,6 +40,8 @@ export type PanelScreen = {
     handTutorial: ReturnType<typeof CreateHandTutorial> | null;
     cover: Cover | null;
     autoCloseTimer: ReturnType<typeof setTimeout> | null;
+    coinsVFX?: AnimatedSprite;
+    hideCover?: boolean;
 }
 
 export default class Panel {
@@ -52,10 +58,22 @@ export default class Panel {
             this._panel.cover.eventMode = "static";
             this._panel.cover.show();
         }
+
         await this._panel.screen.show();
+
         if (this._panel.handTutorial) {
             this._panel.handTutorial.show();
         }
+
+        if (this._panel.coinsVFX) {
+            gsap.to(this._panel.coinsVFX.scale, {
+                x: 5,
+                y: 5,
+                duration: 0.5,
+                ease: "back.out"
+            });
+        }
+
         const autoCloseSec = options.autoCloseAfter;
         if (autoCloseSec != null && autoCloseSec > 0) {
             const ms = autoCloseSec * 1000;
@@ -75,14 +93,25 @@ export default class Panel {
             clearTimeout(this._panel.autoCloseTimer);
             this._panel.autoCloseTimer = null;
         }
+
         if (this._panel.handTutorial) {
             this._panel.handTutorial.destroy();
         }
-        if (this._panel.cover) {
+
+        if (this._panel.hideCover && this._panel.cover) {
             await this._panel.cover.hide();
             this._panel.game.ui.remove(this._panel.cover);
         }
+
         await this._panel.screen.hide();
+
+        if (this._panel.coinsVFX)
+            gsap.to(this._panel.coinsVFX.scale, {
+                x: 0,
+                y: 0,
+                duration: 0.5,
+                ease: "back.out"
+            });
 
         this._panel.game.ui.remove(this._panel.screen);
         this._panel = null;
@@ -97,7 +126,10 @@ export default class Panel {
             cover = game.ui.add(new Cover(game.resizer, 0.6, 0.3), WidgetRoot.CENTER);
         }
 
-        const screen = game.ui.add(new ScreenContainer(0.35, 1.3), WidgetRoot.CENTER);
+        const screen = game.ui.add(new ScreenContainer(0.35, 1.3), WidgetRoot.CENTER, { x: 0, y: -125 });
+
+        const coinsVFX = options.withCoins ? screen.addChild(VFX.coins()) : undefined;
+        coinsVFX?.scale.set(0);
 
         const panelWidth = APP_CONFIG.designSize.x * 0.85 * 2 * 1.5;
         const panelHeight = APP_CONFIG.designSize.y * 0.35 * 2 * 1.5;
@@ -201,6 +233,8 @@ export default class Panel {
             handTutorial,
             cover,
             autoCloseTimer: null,
+            coinsVFX,
+            hideCover: options.hideCover ?? false,
         };
     }
 }

@@ -10,7 +10,6 @@ import {DropShadowFilter} from "pixi-filters";
 import {Play} from "../../plugins/Utils/Animations.ts";
 import {AnimScaleLoop} from "./Anims.ts";
 import {ScreenContainer} from "../../plugins/Utils/Components/ScreenContainer.ts";
-import VFX from "../VFX/VFX.ts";
 import {WidgetRoot} from "../../plugins/Game/UI.ts";
 
 PixiPlugin.registerPIXI(PIXI);
@@ -47,14 +46,14 @@ export class Packshot_Vertical {
             anchor: .5,
         }));
 
+        // const coins = screen.addChild(VFX.coins());
+        // coins.scale = 5;
+
         const packshotChicken = screen.addChild(new Sprite({
             texture: Assets.get(AssetsDB.texture.packshot_chicken),
             anchor: .5,
             y: -250,
         }));
-
-        const coins = screen.addChild(VFX.coins());
-        coins.scale = 2;
 
         const packshot_block = screen.addChild(AnimatedSprite.fromFrames(Assets.get(AssetsDB.data.packshot_block).animations[AssetsDB.data.packshot_block]));
         packshot_block.animationSpeed = .5;
@@ -213,8 +212,8 @@ export class Packshot_Horizontal {
         }));
         AnimScaleLoop(packshotChicken, { from: 1.2, to: 1.25 });
 
-        const coins = screen.addChild(VFX.coins());
-        coins.scale = 2;
+        // const coins = screen.addChild(VFX.coins());
+        // coins.scale = 5;
 
         const packshot_block = screen.addChild(AnimatedSprite.fromFrames(Assets.get(AssetsDB.data.packshot_block).animations[AssetsDB.data.packshot_block]));
         packshot_block.animationSpeed = .5;

@@ -22,6 +22,11 @@ const OUTLINE_WIDTH = 4;
 const OUTLINE_COLOR = 0xffffff;
 const CURSOR_SCALE = 1.5;
 const STEP_TEXT_SIZE = 36;
+/** В ландшафте: стрелки 75%, текст ×1.5 */
+const LANDSCAPE_CURSOR_SCALE = 0.75;
+const LANDSCAPE_TEXT_MULTIPLIER = 1.5;
+/** В портрете: стрелки в 2 раза меньше */
+const PORTRAIT_CURSOR_SCALE = 0.5;
 
 /** Туториал, который нужно отключать при показе MainTutorial и возобновлять при скрытии */
 export type PausableTutorial = {
@@ -97,12 +102,12 @@ export default class MainTutorial {
         let closeHandTimer: ReturnType<typeof setTimeout> | null = null;
 
         const cursorTex = Assets.get(AssetsDB.texture.cursor2);
-        type TutorialHint = { el: Container; text: string; rotation: number; textSide: "left" | "top"; offsetX?: number; offsetY?: number };
+        type TutorialHint = { el: Container; text: string; rotation: number; textSide: "left" | "top"; offsetX?: number; offsetY?: number; gapToArrow?: number };
         const tutorialHints: TutorialHint[] = [
-            { el: header.balanceBlock, text: "1/4 YOUR DEPOSIT", rotation: (20 * Math.PI) / 180, textSide: "left",offsetX : -100, offsetY: 300 },
-            { el: controls.topPanel, text: "2/4 CHOOSE BET", rotation: Math.PI, textSide: "top",offsetX : 0, offsetY: -300 },
-            { el: controls.playBtn, text: '3/4 TAP "GO" TO MOVE CHICKEN FORWARD', rotation: Math.PI, textSide: "top",offsetX : 0, offsetY: -300 },
-            { el: controls.cashBtn, text: "4/4 DONT MISS CASHOUT", rotation: (135 * Math.PI) / 180, textSide: "left",offsetX : -300, offsetY: -300 },
+            { el: header.balanceBlock, text: "1/4 \n YOUR DEPOSIT", rotation: (20 * Math.PI) / 180, textSide: "left",offsetX : -100, offsetY: 300 },
+            { el: controls.topPanel, text: "2/4 \n CHOOSE BET", rotation: Math.PI, textSide: "top", offsetX: 0, offsetY: -300, gapToArrow: 150 },
+            { el: controls.playBtn, text: '3/4 \n TAP "GO" TO MOVE \n CHICKEN FORWARD', rotation: Math.PI, textSide: "top", offsetX: 0, offsetY: -300, gapToArrow: 150 },
+            { el: controls.cashBtn, text: "4/4 \n DONT MISS \n CASHOUT", rotation: (135 * Math.PI) / 180, textSide: "left",offsetX : -300, offsetY: -300 },
         ];
 
         const cursors: Sprite[] = [];
@@ -157,6 +162,7 @@ export default class MainTutorial {
         const updateLayout = () => {
             const rw = game.resizer.realWidth;
             const rh = game.resizer.realHeight;
+            const isLandscape = rw >= rh;
 
             overlay.clear();
             overlayMask.clear();
@@ -183,10 +189,13 @@ export default class MainTutorial {
                 const br = container.toLocal({ x: b.maxX, y: b.maxY });
 
                 const pad = CUTOUT_PADDING;
-                const px = Math.min(tl.x, br.x) - pad;
-                const py = Math.min(tl.y, br.y) - pad;
-                const pw = Math.abs(br.x - tl.x) + pad * 2;
-                const ph = Math.abs(br.y - tl.y) + pad * 2;
+                let px = Math.min(tl.x, br.x) - pad;
+                let py = Math.min(tl.y, br.y) - pad;
+                let pw = Math.abs(br.x - tl.x) + pad * 2;
+                let ph = Math.abs(br.y - tl.y) + pad * 2;
+                if (!isLandscape && el === controls.topPanel) {
+                    ph = ph / 2; // верхняя половина панели, маска выше
+                }
                 const radius = Math.min(12, Math.min(pw, ph) / 4);
 
                 overlayMask.roundRect(px, py, pw, ph, radius).cut();
@@ -206,6 +215,7 @@ export default class MainTutorial {
             overlay.mask = overlayMask;
 
             const tipOffset = 50;
+            const tipOffsetMinimal = 10;
             for (let i = 0; i < tutorialHints.length; i++) {
                 const step = tutorialHints[i];
                 const cursor = cursors[i];
@@ -218,19 +228,58 @@ export default class MainTutorial {
                 const stepW = stepBounds.maxX - stepBounds.minX;
                 const stepH = stepBounds.maxY - stepBounds.minY;
 
-                cursor.rotation = step.rotation;
+                const isStep1Portrait = !isLandscape && step.el === header.balanceBlock;
+                const isStep2Portrait = !isLandscape && step.el === controls.topPanel;
+                const isStep3Portrait = !isLandscape && step.el === controls.playBtn;
+                const isStep4Portrait = !isLandscape && step.el === controls.cashBtn;
+                cursor.scale = isLandscape ? CURSOR_SCALE * LANDSCAPE_CURSOR_SCALE : CURSOR_SCALE * PORTRAIT_CURSOR_SCALE;
+                cursor.rotation = isStep4Portrait ? Math.PI : step.rotation;
+                const stepFontSize = (isStep3Portrait || isStep4Portrait)
+                    ? STEP_TEXT_SIZE * 0.75
+                    : isLandscape
+                        ? STEP_TEXT_SIZE * LANDSCAPE_TEXT_MULTIPLIER
+                        : STEP_TEXT_SIZE;
+                hintText.style.fontSize = stepFontSize;
                 hintText.text = step.text;
 
                 const offsetX = step.offsetX ?? 0;
                 const offsetY = step.offsetY ?? 0;
-                if (step.textSide === "left") {
+                if (isStep2Portrait) {
+                    const topOfPanel = stepCenter.y - stepH / 2;
+                    const step2ArrowOffset = 175;
+                    cursor.position.set(stepCenter.x + offsetX, topOfPanel - step2ArrowOffset);
+                    hintText.anchor.set(0.5, 1);
+                    const step2TextGap = 20;
+                    hintText.position.set(cursor.x, cursor.y - step2TextGap);
+                } else if (isStep3Portrait) {
+                    const topOfButton = stepCenter.y - stepH;
+                    const step3ArrowOffset = 100;
+                    const step3ArrowOffsetX = 125;
+                    cursor.position.set(stepCenter.x + step3ArrowOffsetX, topOfButton - step3ArrowOffset);
+                    hintText.anchor.set(1, 0.5);
+                    hintText.position.set(cursor.x - 35, cursor.y + 15);
+                } else if (isStep4Portrait) {
+                    const topOfButton = stepCenter.y - stepH;
+                    const step4ArrowOffset = 100;
+                    const step4ArrowOffsetX = 80;
+                    cursor.position.set(stepCenter.x + step4ArrowOffsetX, topOfButton - step4ArrowOffset);
+                    hintText.anchor.set(1, 0.5);
+                    hintText.position.set(cursor.x - 35, cursor.y + 15);
+                } else if (isStep1Portrait) {
+                    const step1OffsetY = 220;
+                    cursor.position.set(stepCenter.x + stepW / 2 + tipOffset + offsetX, stepCenter.y + step1OffsetY);
+                    hintText.anchor.set(1, 0.5);
+                    hintText.position.set(cursor.x - cursor.width, cursor.y);
+                } else if (step.textSide === "left") {
                     cursor.position.set(stepCenter.x + stepW / 2 + tipOffset + offsetX, stepCenter.y + offsetY);
                     hintText.anchor.set(1, 0.5);
                     hintText.position.set(cursor.x - cursor.width, cursor.y);
                 } else {
                     cursor.position.set(stepCenter.x + offsetX, stepCenter.y - stepH / 2 - tipOffset + offsetY);
                     hintText.anchor.set(0.5, 1);
-                    hintText.position.set(cursor.x, cursor.y - cursor.height - 15);
+                    const gapTop = step.gapToArrow ?? 15;
+                    const cursorTop = cursor.getBounds().minY;
+                    hintText.position.set(cursor.x, cursorTop - gapTop);
                 }
             }
 

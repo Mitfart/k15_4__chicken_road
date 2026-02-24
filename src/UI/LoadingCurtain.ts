@@ -10,6 +10,7 @@ import {WidgetRoot} from "../../plugins/Game/UI.ts";
 import {AddBackground, AddCover} from "../../plugins/Game/GameUIUtils.ts";
 import {APP_CONFIG} from "../config.ts";
 import {AnimAlphaLoop} from "./Anims.ts";
+import {Cover} from "../../plugins/Utils/Components/Cover.ts";
 
 PixiPlugin.registerPIXI(PIXI);
 gsap.registerPlugin(PixiPlugin);
@@ -17,8 +18,9 @@ gsap.registerPlugin(PixiPlugin);
 
 export type Curtain = {
     view: Container,
-    fill: Graphics
-    other: Container[],
+    fill: Graphics,
+    background: Sprite,
+    cover: Cover,
 };
 
 export default class LoadingCurtain {
@@ -49,11 +51,11 @@ export default class LoadingCurtain {
     }
 
     public static Hide(game: Game) {
-        game.ui.remove(this._curtain.view);
-        this._curtain.other.forEach(other => game.ui.remove(other));
+        if (!this._curtain) return;
 
-        this._curtain.view.destroy();
-        this._curtain.other.forEach(other => other.destroy());
+        game.ui.remove(this._curtain.view);
+        game.ui.remove(this._curtain.background);
+        game.ui.remove(this._curtain.cover);
     }
 
 
@@ -122,7 +124,8 @@ export default class LoadingCurtain {
         return this._curtain = {
             view,
             fill,
-            other: [ background, cover ]
+            background,
+            cover
         };
     }
 }

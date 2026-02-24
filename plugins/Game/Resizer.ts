@@ -1,6 +1,8 @@
 import {Application} from "pixi.js";
-import {debounceFunc, isNumber} from "../Utils/utils.ts";
+import {debounceFunc} from "../Utils/utils.ts";
 
+
+export type ResizeAction = (w: number, h: number) => void;
 
 export class Resizer {
     private _app: Application;
@@ -9,7 +11,7 @@ export class Resizer {
     private _designHeight: number;
     private _designAspectRatio: number;
 
-    private _resizeActions: ((w: number, h: number) => void)[];
+    private _resizeActions: Map<number, ResizeAction>;
 
     private _realWidth: number = -1;
     private _realHeight: number = -1;
@@ -35,13 +37,11 @@ export class Resizer {
         this._designHeight = designSize.y;
         this._designAspectRatio = this._designWidth / this._designHeight;
 
-        this._resizeActions = [];
+        this._resizeActions = new Map<number, ((w: number, h: number) => void)>();
     }
 
 
     public startProcess() {
-        this.resize();
-
         if (!this._started)
             window.addEventListener("resize", debounceFunc(() => {
                 this.resize();
@@ -58,18 +58,18 @@ export class Resizer {
     }
 
 
-    public addResizeAction(action: (w: number, h: number) => void): number {
+    public addResizeAction(id: number, action: ResizeAction) {
+        if (!action) {
+            console.error(`Action of ${id} is ${action}`);
+            return;
+        }
+
         action(this.realWidth, this.realHeight);
-        return this._resizeActions.push(action);
+        this._resizeActions.set(id, action);
     }
 
-    public removeResizeAction(action: (w: number, h: number) => void): void;
-    public removeResizeAction(actionID: number): void;
-    public removeResizeAction(arg: ((w: number, h: number) => void) | number) {
-        const actionID: number = isNumber(arg)
-            ? arg as number
-            : this._resizeActions.indexOf(arg as (w: number, h: number) => void);
-        this._resizeActions.splice(actionID, 1);
+    public removeResizeAction(actionID: number) {
+        this._resizeActions.delete(actionID);
     }
 
 

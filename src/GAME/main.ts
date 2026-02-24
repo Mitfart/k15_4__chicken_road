@@ -75,7 +75,7 @@ export async function Main(game: Game) {
     level = game.container.addChild(new Level());
     chicken = game.container.addChild(new Chicken(chickenJump.height, chickenJump.duration));
 
-    game.resizer.addResizeAction((w, h) => {
+    game.resizer.addResizeAction(_game.container.uid, (w, h) => {
         game.container.scale.set(Math.max(
             1,
             w / level.width * .8,

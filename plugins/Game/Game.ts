@@ -55,7 +55,7 @@ export class Game {
     }
 
     public setGameResizeTarget(level: Container) {
-        this._resizer.addResizeAction(() => {
+        this._resizer.addResizeAction(this._container.uid, () => {
             this._container.scale.set(Math.max(
                 1,
                 this._resizer.realWidth / level.width,

@@ -54,7 +54,7 @@ export default class MainTutorial {
     ): Promise<MainTutorialScreen> {
         if (this._tutorial) return this._tutorial;
 
-        const container = game.ui.add(new Container(), WidgetRoot.CENTER);
+        const container = new Container();
         container.sortableChildren = true;
         container.eventMode = "static";
 
@@ -189,9 +189,9 @@ export default class MainTutorial {
                 const br = container.toLocal({ x: b.maxX, y: b.maxY });
 
                 const pad = CUTOUT_PADDING;
-                let px = Math.min(tl.x, br.x) - pad;
-                let py = Math.min(tl.y, br.y) - pad;
-                let pw = Math.abs(br.x - tl.x) + pad * 2;
+                const px = Math.min(tl.x, br.x) - pad;
+                const py = Math.min(tl.y, br.y) - pad;
+                const pw = Math.abs(br.x - tl.x) + pad * 2;
                 let ph = Math.abs(br.y - tl.y) + pad * 2;
                 if (!isLandscape && el === controls.topPanel) {
                     ph = ph / 2; // верхняя половина панели, маска выше
@@ -215,7 +215,6 @@ export default class MainTutorial {
             overlay.mask = overlayMask;
 
             const tipOffset = 50;
-            const tipOffsetMinimal = 10;
             for (let i = 0; i < tutorialHints.length; i++) {
                 const step = tutorialHints[i];
                 const cursor = cursors[i];
@@ -290,7 +289,6 @@ export default class MainTutorial {
             reopenBtn.position.set(cornerX - reopenSize / 2, cornerY + reopenSize / 2);
         };
 
-        game.resizer.addResizeAction(updateLayout);
         updateLayout();
 
         let isVisible = false;
@@ -363,6 +361,8 @@ export default class MainTutorial {
         OnClick(reopenBtn, show);
 
         container.visible = false;
+
+        game.ui.add(container, WidgetRoot.CENTER, { x:0, y:0 }, () => updateLayout());
 
         return (this._tutorial = {
             container,

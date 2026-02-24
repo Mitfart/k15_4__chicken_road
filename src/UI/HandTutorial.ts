@@ -115,7 +115,7 @@ export function CreateHandTutorial(
             if (targetButton.parent && container.parent) updatePosition();
         });
     };
-    game.resizer.addResizeAction(resizeAction);
+    game.resizer.addResizeAction(container.uid, resizeAction);
 
     const show = () => {
         if (isVisible) return;
@@ -136,7 +136,7 @@ export function CreateHandTutorial(
     const destroy = () => {
         stopTapAnimation();
         hide();
-        game.resizer.removeResizeAction(resizeAction);
+        game.resizer.removeResizeAction(container.uid);
         if (parentContainer) {
             parentContainer.removeChild(container);
             container.destroy();

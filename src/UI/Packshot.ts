@@ -160,7 +160,7 @@ export class Packshot_Vertical {
             scale: .65,
         }));
 
-        game.resizer.addResizeAction((w, h) => {
+        game.resizer.addResizeAction(screen.uid, (w, h) => {
             background
                 .rect(-w / 2, -h / 2, w, h)
                 .fill('#48244b');
@@ -303,7 +303,7 @@ export class Packshot_Horizontal {
             anchor: .5,
         }));
 
-        game.resizer.addResizeAction((w, h) => {
+        game.resizer.addResizeAction(screen.uid, (w, h) => {
             background
                 .rect(-w / 2, -h / 2, w, h)
                 .fill('#48244b');

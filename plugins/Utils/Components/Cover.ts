@@ -37,11 +37,11 @@ export class Cover extends Graphics {
 
         this._hideAnim().play(this._hideAnim().endTime());
 
-        this._resizer.addResizeAction(this.resizeAction);
+        this._resizer.addResizeAction(this.uid, this.resizeAction);
     }
 
     destroy(options?: DestroyOptions) {
-        this._resizer.removeResizeAction(this.resizeAction);
+        this._resizer.removeResizeAction(this.uid);
 
         super.destroy(options);
     }

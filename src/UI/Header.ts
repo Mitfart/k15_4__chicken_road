@@ -24,6 +24,10 @@ export default class Header {
     private static _header: HeaderScreen;
 
 
+    public static Get(): HeaderScreen {
+        return this._header;
+    }
+
     public static async Construct(game: Game): Promise<HeaderScreen> {
         if (this._header)
             return this._header;
@@ -67,6 +71,8 @@ export default class Header {
 
 
         game.ui.add(container, WidgetRoot.TOP, {x: 0, y: -stroke}, (_, w) => {
+            console.log("Header - Resize");
+
             background.clear()
                 .rect(-w / 2, -height / 2, w, height)
                 .stroke({

@@ -22,15 +22,13 @@ export class UI {
     private _game: Game;
     private _root: UIContainer;
 
-    private _resizeForChildren: { [key: string]: (w: number, h: number) => void } = {};
-
 
     constructor(game: Game) {
         this._game = game;
 
         this._root = new UIContainer(this._game.app, this._game.resizer);
 
-        this._game.resizer.addResizeAction((w) => {
+        this._game.resizer.addResizeAction(this.container.uid, (w) => {
             this.container.scale.set(clamp(
                 w / this._game.config.designSize.x,
                 this._game.config.uiScale?.min ?? 1,
@@ -94,7 +92,7 @@ export class UI {
                 break;
         }
 
-        this._resizeForChildren[ins.uid] = (w, h) => {
+        this._game.resizer.addResizeAction(ins.uid, (w, h) => {
             if (runBefore)
                 resizeFunc(ins, w, h);
 
@@ -111,15 +109,14 @@ export class UI {
 
             if (!runBefore)
                 resizeFunc(ins, w, h);
-        };
-        this._game.resizer.addResizeAction(this._resizeForChildren[ins.uid]);
+        });
+
 
         return this.container.addChild(ins);
     }
 
     public remove<T extends Container>(ins: T): void {
-        this._game.resizer.removeResizeAction(this._resizeForChildren[ins.uid]);
-        delete this._resizeForChildren[ins.uid];
+        this._game.resizer.removeResizeAction(ins.uid);
         ins.destroy();
     }
 }

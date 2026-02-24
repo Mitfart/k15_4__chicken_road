@@ -6,7 +6,7 @@ import Header, {HeaderScreen} from "../UI/Header.ts";
 import Contols, {ControlsScreen} from "../UI/Contols.ts";
 import MainTutorial from "../UI/MainTutorial.ts";
 import {CreateHandTutorial} from "../UI/HandTutorial.ts";
-import {OnClick} from "../../plugins/Utils/UIEvents.ts";
+import {OffClick, OnClick} from "../../plugins/Utils/UIEvents.ts";
 import {AnimPulseIn, AnimScale, Play} from "../../plugins/Utils/Animations.ts";
 import Chest from "../UI/Chest.ts";
 import Panel from "../UI/Panel.ts";
@@ -21,6 +21,7 @@ import {ChestLevelView} from "../UI/ChestLevelView.ts";
 import {GAME_CONFIG} from "../game.config.ts";
 import {Container} from "pixi.js";
 import {OnlineUsers} from "../UI/OnlineUsers.ts";
+import {Tutorial} from "../../plugins/Utils/Components/Tutorial.ts";
 
 
 let _game!: Game;
@@ -142,6 +143,8 @@ export async function Main(game: Game) {
 
         playBtnAnim();
         play();
+
+        finish();
     });
 
     // ===========================================================================================
@@ -173,7 +176,7 @@ async function play() {
             return;
         } else if (level.currentSegmentID >= level.length - 1) {
             await finish();
-            return
+            return;
         } else {
             setScore(level.currentSegment?.value || 0);
             chicken.balanceTxt.text = level.currentSegment?.value_view ?? '';
@@ -204,33 +207,54 @@ async function finish() {
     sound.play(AssetsDB.audio.win);
     await delay(.5);
 
-    await Panel.Show(_game, {
+    controls.container.zIndex = 1000;
+
+    Panel.Show(_game, {
         text: "CONGRATULATIONS",
         amountText: "7 000 EUR",
         showButton: false,
         useCover: true,
-        autoCloseAfter: 2,
-        onClaim: async () => {
-            await Bank.Show(_game, 2);
-
-            await delay(.5);
-
-            const packshot_ver = await Packshot_Vertical.Construct(_game);
-            packshot_ver.screen.show();
-
-            const packshot_hor = await Packshot_Horizontal.Construct(_game);
-            packshot_hor.screen.show();
-
-            const install = () => {
-                sound.play(AssetsDB.audio.click);
-
-                sdk.install();
-            };
-
-            OnClick(packshot_ver.btn, install);
-            OnClick(packshot_hor.btn, install);
-
-            await Bank.Hide();
-        },
+        autoCloseAfter: 10,
+        onClaim: () => cashClick()
     });
+
+    const cashTutorial = controls.cashBtn.addChild(new Tutorial(AssetsDB.texture.hand));
+
+    cashTutorial.show();
+
+    let cashed: boolean = false;
+    const cashClick = async () => {
+        if (cashed) return;
+        cashed = true;
+        OffClick(controls.cashBtn, cashClick);
+
+        controls.container.zIndex = 0;
+
+        AnimPulseIn(controls.cashBtn, .5, .5);
+        cashTutorial.hide();
+
+        await Promise.all([
+            Panel.Hide(),
+            Bank.Show(_game, 2),
+        ]);
+        await delay(.5);
+
+        const packshot_ver = await Packshot_Vertical.Construct(_game);
+        packshot_ver.screen.show();
+
+        const packshot_hor = await Packshot_Horizontal.Construct(_game);
+        packshot_hor.screen.show();
+
+        const install = () => {
+            sound.play(AssetsDB.audio.click);
+
+            sdk.install();
+        };
+
+        OnClick(packshot_ver.btn, install);
+        OnClick(packshot_hor.btn, install);
+
+        await Bank.Hide();
+    };
+    OnClick(controls.cashBtn, cashClick);
 }

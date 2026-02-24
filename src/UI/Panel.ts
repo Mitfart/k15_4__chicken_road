@@ -26,7 +26,7 @@ export type PanelOptions = {
     useCover?: boolean;
     /** Секунды через которые вызвать onClaim и скрыть панель (если задано, кнопка не показывается) */
     autoCloseAfter?: number;
-    onClaim: () => void;
+    onClaim?: () => void;
 }
 
 export type PanelScreen = {

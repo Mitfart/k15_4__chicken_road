@@ -78,10 +78,10 @@ export async function Main(game: Game) {
         game.container.scale.set(Math.max(
             1,
             w / level.width * .8,
-            h / level.height * .8
+            h / level.height * 1.125
         ));
 
-        level.position.set(0, h * .23 / game.container.scale.y);
+        level.position.set(0, h * .45 / game.container.scale.y);
 
         chicken.position.set(level.currentPosition, level.position.y);
     });

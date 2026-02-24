@@ -91,7 +91,7 @@ export class Chicken extends Container {
 
 
     private createView() {
-        const origin = {x: .75, y: .75};
+        const origin = {x: 1, y: .75};
 
         this.scale.set(.5);
 

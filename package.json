@@ -8,7 +8,7 @@
     "dev": "playable-scripts dev",
     "assets_process": "npm run assets_compress && npm run assets_generate",
     "ap": "npm run assets_process",
-    "assets_compress": "node plugins/Assets/assets_compress.ts 45 64",
+    "assets_compress": "node plugins/Assets/assets_compress.ts 40 64",
     "ac": "npm run assets_compress",
     "assets_generate": "node plugins/Assets/assets_generate.ts",
     "ag": "npm run assets_generate",

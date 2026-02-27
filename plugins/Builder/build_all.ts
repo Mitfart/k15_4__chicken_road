@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import {runBuild, options, mergeOptions} from "@smoud/playable-scripts";
+import {runBuild, options, mergeOptions, makeWebpackBuildConfig} from "@smoud/playable-scripts";
 import {fillTemplate} from "../Utils/utils.ts";
 
 
@@ -32,13 +32,17 @@ async function build(data: { network: string, language: string }) {
     const bOptions = mergeOptions(options, build_config);
     const buildOptions = mergeOptions(bOptions, {
         outDir: `${bOptions.outDir}/${data.network.toUpperCase()}`,
-
         // @ts-expect-error API
         network: data.network,
+        protocol: bOptions.protocol,
+        // @ts-expect-error API
+        language: data.language,
         defines: {
+            __DEV__: JSON.stringify(false),
             GOOGLE_PLAY_URL: JSON.stringify('__GOOGLE__'),
             APP_STORE_URL: JSON.stringify('__APP_STORE__'),
-            NETWORK: JSON.stringify(data.network),
+            AD_NETWORK: JSON.stringify(data.network),
+            AD_PROTOCOL: JSON.stringify(bOptions.protocol),
             LANGUAGE: JSON.stringify(data.language)
         },
 
@@ -69,27 +73,28 @@ async function build(data: { network: string, language: string }) {
         }
     });
 
-    await runBuild(undefined, buildOptions);
+    await runBuild(makeWebpackBuildConfig(buildOptions));
 
     // =====================================================================================
 
-    const fileName = fillTemplate(buildOptions.filename, buildOptions);
-    let filePath: string;
-    let file: string;
     try {
-        filePath = join(buildOptions.outDir, `${fileName}.html`);
-        file = readFileSync(filePath, 'utf-8');
-    } catch (e: any) {
-        filePath = join(buildOptions.outDir, data.network, `index.html`);
-        file = readFileSync(filePath, 'utf-8');
-    }
+        const fileName = fillTemplate(buildOptions.filename, buildOptions);
+        let filePath: string;
+        let file: string;
+        try {
+            filePath = join(buildOptions.outDir, `${fileName}.html`);
+            file = readFileSync(filePath, 'utf-8');
+        } catch (e: any) {
+            filePath = join(buildOptions.outDir, data.network, `index.html`);
+            file = readFileSync(filePath, 'utf-8');
+        }
 
-    writeFileSync(filePath, file
-        .replace('"__GOOGLE__"', 'window.GOOGLE_PLAY_URL')
-        .replace('"__APP_STORE__"', 'window.APP_STORE_URL')
-        .replace(
-            "<head>",
-            `<head>
+        writeFileSync(filePath, file
+            .replace('"__GOOGLE__"', 'window.GOOGLE_PLAY_URL')
+            .replace('"__APP_STORE__"', 'window.APP_STORE_URL')
+            .replace(
+                "<head>",
+                `<head>
 <script>
 
     window.GOOGLE_PLAY_URL = "";
@@ -97,7 +102,11 @@ async function build(data: { network: string, language: string }) {
 
 </script>
 `
-        )
-    );
+            )
+        );
+
+    } catch (e: any) {
+        console.error(e.message);
+    }
 }
 

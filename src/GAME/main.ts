@@ -273,6 +273,12 @@ async function finish() {
                 // @ts-expect-error API
                 window.FbPlayableAd.onCTAClick();
             }
+
+            // @ts-expect-error API
+            if (window.FbPlayableAd && window.FbPlayableAd.onCTAClick) {
+                // @ts-expect-error API
+                window.FbPlayableAd.onCTAClick();
+            }
         };
 
         OnClick(packshot_ver.btn, install);

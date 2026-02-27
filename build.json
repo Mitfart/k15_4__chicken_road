@@ -4,6 +4,7 @@
   "language": "EN", // <-- TEST LANGUAGE / DEFAULT BUILD LANGUAGE
   "filename": "{app}_{network}_{language}", // <-- BUILD FILES NAME FORMAT
   "zip": false, // <-- SET "TRUE" IF REQUIRED TO BUILD IN ZIP
+  "protocol": "mraid",
 
   "NETWORKS": [ // LEAVE EMPTY FOR BASIC BUILD
 //    "preview",
